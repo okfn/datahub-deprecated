@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CKAN Javascript Client</title>
+
+  <link rel="shortcut icon" href="http://assets.okfn.org/p/ckan/img/ckan.ico" type="image/x-icon" /> 
+
+  <link rel="stylesheet" href="http://ckan.net/css/style.css" type="text/css" media="screen, print" />
+  <link rel="stylesheet" href="http://ckan.net/css/forms.css" type="text/css" media="screen, print" />
+  <!-- local cached copy of ckan css for when working offline -->
+  <link rel="stylesheet" href="css/ckan/style.css" type="text/css" media="screen, print" />
+  <link rel="stylesheet" href="css/ckan/forms.css" type="text/css" media="screen, print" />
+
+  <link rel="stylesheet" href="css/ckanjs.css" type="text/css" media="screen, print" />
+
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+  <script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
+
+  <script src="../vendor/jquery/1.4.4/jquery.min.js"></script>
+  <script src="../vendor/json2.js"></script>
+  <script src="../vendor/jquery.tmpl/beta1/jquery.tmpl.min.js"></script>
+  <script src="../vendor/showdown/showdown.js"></script>
+  <script src="../vendor/jquery.jeditable/1.7.2/jquery.jeditable.min.js"></script>
+  <script src="../vendor/underscore/1.1.4/underscore.min.js"></script>
+  <script src="../vendor/backbone/0.3.3/backbone.min.js"></script>
+
+  <script src="../lib/config.js"></script>
+  <script src="configlocal.js"></script>
+
+  <script src="../lib//model.js"></script>
+  <script src="../lib/view.js"></script>
+  <script src="../lib/ui.js"></script>
+
+  <script type="text/javascript">
+    jQuery(document).ready(function($) {
+      CKAN.UI.initialize();
+      // $('input.search').val('russian');
+      // $('#search-form').submit();
+    });
+  </script>
+
+  <style>
+    #search-form {
+      margin-bottom: 30px;
+    }
+  </style>
+</head>
+<body>
+<div id="wrapper" class="hfeed">
+  <div id="header">
+  <div id="masthead">
+    <div id="branding" role="banner">
+    <h1 id="site-title">CKAN from Javascript</h1>
+
+    <div id="top-bar">
+    </div><!-- /top-bar -->
+
+    <div id="access" role="navigation">
+      <div class="menu">
+        <ul>
+          <li class="first"><a href="#search">Search</a></li>
+          <li><a href="#add">Add a Dataset</a></li>
+          <li><a href="#add-resource">Add a Resource</a></li>
+          <li class="last">
+            <a href="#config" class="config-show">Configuration</a>
+          </li>
+        </ul>
+      </div> <!-- .menu -->
+    </div> <!-- #access -->
+
+  </div><!-- #masthead -->
+  </div><!-- #header -->  
+
+  <div id="main"> 
+    <div class="flash-banner-box">
+    </div>
+
+    <div id="container"> 
+      <div id="content" role="main"> 
+
+      <div id="config-page" class="page-view" style="display: none;">
+        <div id="config-form">
+          <form>
+            <label for="ckan-url">CKAN Url</label>
+            <input type="text" name="ckan-url" value="" placeholder="CKAN Url e.g. http://ckan.net" />
+            <br />
+            <label for="ckan-api-key">API Key</label>
+            <input type="text" name="ckan-api-key" value="" placeholder="API Key" />
+            <br />
+            <input type="submit" name="save" value="Save" />
+          </form>
+        </div>
+      </div>
+
+      <div id="add-page" class="page-view" style="display: none;">
+        <h2>Add a Dataset</h2>
+      </div>
+
+      <div id="edit-page" class="page-view" style="display: none;">
+        <h2>Edit Dataset</h2>
+      </div>
+
+      <div id="add-resource-page" class="page-view" style="display: none;">
+      </div>
+
+      <div id="search-page" class="page-view">
+        <form id="search-form">
+          <input type="search" name="q" placeholder="Search ..." class="search" />
+          <input type="submit" name="submit" value="Search" />
+        </form>
+
+        <div class="dialog">
+        </div>
+
+        <div class="results" style="display: none;">
+          <h3>Results</h3>
+          <p>
+          <strong><span class="count"></span></strong> results found.
+          </p>
+
+          <ul class="packages">
+          </ul>
+        </div>
+      </div>
+
+      </div> <!-- #content -->
+    </div> <!-- #container -->
+  </div><!-- #main -->
+
+</div><!-- #wrapper -->
+
+<!-- templates -->
+
+<script id="tmpl-package-summary" type="x-jquery-tmpl">
+  <li class="ckan-package" ckan-package-id="${package.id}">
+    <div class="header">
+      <span class="title" >
+        <a href="${ckan_url}" ckan-attrname="title" class="editable">${displaytitle}</a>
+      </span>
+      <div class="search_meta">
+        {{if package.resources.length}}
+        <ul class="package_formats">
+          {{each package.resources}}
+            <li>${$value.format}</li>
+          {{/each}}
+        </ul>
+        {{/if}}
+      </div>
+    </div>
+    <div class="extract editable-area">
+      {{html package.snippet()}}
+    </div>
+    <div class="package-tags">
+      {{if package.tags.length}}
+      <ul class="package-tags">
+        {{each package.tags}}
+          <li>${$value}</li>
+        {{/each}}
+      </ul>
+      {{/if}}
+    </div>
+    <ul class="actions">
+      <li><a href="#more">More &raquo;</a></li>
+      <li><a href="#edit">Edit &raquo;</a></li>
+    </ul>
+  </li>
+</script>
+
+<script id="tmpl-package-form" type="x-jquery-tmpl">
+  <form class="package" action="" method="POST">
+  <fieldset>
+    <legend>
+      <h3>Basics</h3>
+    </legend>
+    <dl>
+      <dt>
+        <label class="field_opt" for="Package--title">
+          Title
+        </label>
+      </dt>
+      <dd>
+        <input id="Package--title" name="Package--title" type="text" value="${title}" placeholder="A title (not a description) .."/>
+      </dd>
+
+      <dt>
+        <label class="field_req" for="Package--name">
+          'Slug'
+        </label>
+      </dt>
+      <dd>
+        <input id="Package--name" maxlength="100" name="Package--name" type="text" value="${name}" placeholder="A shortish name usable in urls ..." />
+        <img src="img/help.png"
+          class="help"
+          title="A unique lowercase name for the package for use in urls and thefore only containing alphanumeric characters plus - and _"
+          >
+      </dd>
+
+      <dt>
+        <label class="field_opt" for="Package--url">
+          Data Home Page
+        </label>
+      </dt>
+      <dd>
+        <input id="Package--url" name="Package--url" type="text" value="${url}" placeholder="http://mydataset.com/about/" />
+      </dd>
+
+      <dt>
+        <label class="field_opt" for="Package--license_id">
+          Licence
+        </label>
+      </dt>
+      <dd>
+        <select id="Package--license_id" name="Package--license_id">
+          <option selected="selected" value=""></option>
+          <option value="notspecified">Other::License Not Specified</option>
+        </select>
+      </dd>
+
+      <dt>
+        <label class="field_opt" for="Package--notes">
+          Description and Notes
+        </label>
+        You can use <a href="http://daringfireball.net/projects/markdown/syntax">Markdown formatting</a>
+      </dt>
+      <dd>
+        <div class="previewable-textarea">
+          <ul class="tabs">
+            <li><a href="#" action="write" class="selected">Write</a></li>
+            <li><a href="#" action="preview">Preview</a></li>
+          </ul>
+          <textarea id="Package--notes" name="Package--notes" placeholder="Start with a summary sentence ...">${notes}</textarea>
+          <div id="Package--notes-preview" class="preview" style="display: none;">
+          <div>
+        </div>
+      </dd>
+
+      <dt>
+        <label class="field_opt" for="Package--tags">
+          Tags
+        </label>
+      </dt>
+      <dd>
+        <input class="tagComplete" data-tagcomplete-queryparam="incomplete" data-tagcomplete-url="/api/2/util/tag/autocomplete" id="Package--tags" name="Package--tags" type="text" value="${tags}" placeholder="e.g. pollution rivers water-quality" />
+      </dd>
+    </dl>
+  </fieldset>
+
+    <div class="submit">
+      <input id="save" name="save" type="submit" value="Save" />
+    </div>
+    <p class="hints">
+    <strong>Important:</strong> By submitting content, you agree to release your contributions
+      under the open license specified on the <a href="http://ckan.net/license">license page</a>. Please <strong>refrain</strong> from editing if you are <strong>not</strong> happy to do this.
+    </p>
+  </form>
+</script>
+
+<script id="tmpl-resource-form" type="x-jquery-tmpl">
+  <h2>Add a Resource (File, API, ...)</h2>
+  <form class="resource" action="" method="POST">
+    <dl>
+      <dt>
+        <label class="field_opt" for="Resource--url">
+          Resource URL
+        </label>
+      </dt>
+      <dd>
+        <input id="Resource--url" name="Resource--url" type="text" value="${url}" placeholder="http://mydataset.com/file.csv" />
+      </dd>
+    </dl>
+
+  <fieldset>
+    <legend>
+      <h3>A Bit More Info</h3>
+    </legend>
+    <dl>
+      <dt>
+        <label class="field_opt" for="Resource--description">
+          Description
+        </label>
+      </dt>
+      <dd>
+        <input id="Resource--description" name="Resource--description" type="text" value="${description}" placeholder="A short description ..."/>
+      </dd>
+
+      <dt>
+        <label class="field_opt" for="Resource--kind">
+          Kind
+        </label>
+      </dt>
+      <dd>
+        <select id="Resource--license_id" name="Resource--license_id">
+          <option selected="selected" value="file">File</option>
+          <option value="api">API</option>
+          <option value="index">Index (or Listing)</option>
+          <option value="example">Example</option>
+        </select>
+      </dd>
+
+      <dt>
+        <label class="field_opt" for="Resource--format">
+          Format
+        </label>
+      </dt>
+      <dd>
+        <input id="Resource--format" name="Resource--format" type="text" value="${format}" placeholder="e.g. csv, zip:csv (zipped csv), sparql"/>
+      </dd>
+
+      <dt>
+        <label class="field_opt" for="Resource--license_id">
+          Licence
+        </label>
+      </dt>
+      <dd>
+        <select id="Resource--license_id" name="Resource--license_id">
+          <option selected="selected" value=""></option>
+          <option value="notspecified">Other::License Not Specified</option>
+        </select>
+      </dd>
+  </fieldset>
+
+    <div class="submit">
+      <input id="save" name="save" type="submit" value="Save" />
+    </div>
+    <p class="hints">
+    <strong>Important:</strong> By submitting content, you agree to release your contributions
+      under the open license specified on the <a href="http://ckan.net/license">license page</a>. Please <strong>refrain</strong> from editing if you are <strong>not</strong> happy to do this.
+    </p>
+  </form>
+</script>
+
+</body>
+</html>
+
