@@ -60,6 +60,11 @@ header .menu #menusearch {
 
 header .menu #mainmenu {
   display: inline;
+  padding-left: 0;
+}
+
+header .menu #mainmenu li {
+  display: inline;
 }
 
 header .account {
