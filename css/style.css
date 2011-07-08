@@ -1,0 +1,11 @@
+@import url("pdeu.css");
+@import url("ckanjs.css");
+
+img#logo {
+  width: 64px;
+}
+
+.page-heading {
+  display: none;
+}
+
