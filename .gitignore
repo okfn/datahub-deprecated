@@ -1,2 +1,4 @@
 configlocal.js
 sandbox
+*.pyc
+*.egg.info
