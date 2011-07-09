@@ -1,4 +1,5 @@
 import unittest
+import json
 
 from datadeck import web
 
@@ -16,8 +17,10 @@ class WebstoreTestCase(unittest.TestCase):
     def make_fixtures(self):
         pass
 
-    def test_nothing(self):
-        assert True
+    def test_user_resource_index(self):
+        res = self.app.get('/api/v1/resource/no_user')
+        body = json.loads(res.data)
+        assert len(body)==0, body
 
 
 if __name__ == '__main__':
