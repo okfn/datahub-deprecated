@@ -2,6 +2,7 @@ import unittest
 import json
 
 from datadeck import core
+from datadeck import model
 from datadeck import web
 
 JSON = 'application/json'
@@ -21,23 +22,28 @@ class ResourceTestCase(unittest.TestCase):
         core.db.drop_all()
 
     def make_fixtures(self):
+        # TODO: call logic layer instead, once there is one:
+        user = model.User('fixtures')
+        core.db.session.add(user)
+        core.db.session.commit()
+
         self.app.post('/api/v1/resource/fixtures', data=RESOURCE_FIXTURE)
 
     def test_user_resource_index(self):
-        res = self.app.get('/api/v1/resource/no_user')
+        res = self.app.get('/api/v1/resource/fixtures')
         body = json.loads(res.data)
-        assert len(body)==0, body
+        assert len(body)==1, body
 
     def test_user_resource_create_as_json(self):
         data = json.dumps({'name': 'world'})
-        res = self.app.post('/api/v1/resource/hello', data=data, 
+        res = self.app.post('/api/v1/resource/fixtures', data=data, 
                 headers={'Accept': JSON}, content_type=JSON)
         body = json.loads(res.data)
         assert isinstance(body, dict)
 
     def test_user_resource_create_as_form_data(self):
         data = {'name': 'world'}
-        res = self.app.post('/api/v1/resource/hello', data=data, 
+        res = self.app.post('/api/v1/resource/fixtures', data=data, 
                 headers={'Accept': JSON})
         body = json.loads(res.data)
         assert isinstance(body, dict)
