@@ -7,7 +7,8 @@ from datahub import web
 
 JSON = 'application/json'
 
-RESOURCE_FIXTURE = {'name': 'my-file', 'url': 'http://mylab.org/data.csv',
+RESOURCE_FIXTURE = {'name': 'my-file', 
+                    'url': 'http://mylab.org/data.csv',
                     'summary': 'A very neat resource!'}
 
 class ResourceTestCase(unittest.TestCase):
@@ -93,6 +94,34 @@ class ResourceTestCase(unittest.TestCase):
 
         res = self.app.get('/api/v1/resource/fixtures/my-file')
         assert res.status.startswith("404"), res.data
+
+    def test_create_invalid_data(self):
+        data = RESOURCE_FIXTURE.copy() 
+        data['name'] = 'invalid name'
+        res = self.app.post('/api/v1/resource/fixtures', data=data, 
+                            headers={'Accept': JSON})
+        assert res.status.startswith("400"), res
+        data = json.loads(res.data)
+        assert 'name' in data['errors'], data
+
+        data = RESOURCE_FIXTURE.copy() 
+        data['url'] = 'not really a url'
+        res = self.app.post('/api/v1/resource/fixtures', data=data, 
+                            headers={'Accept': JSON})
+        assert res.status.startswith("400"), res
+        data = json.loads(res.data)
+        assert 'url' in data['errors'], data
+
+    def test_create_existing_name(self):
+        res = self.app.post('/api/v1/resource/fixtures', 
+                            data=RESOURCE_FIXTURE, 
+                            headers={'Accept': JSON})
+        assert res.status.startswith("400"), res
+        data = json.loads(res.data)
+        assert 'name' in data['errors'], data
+
+
+
 
 if __name__ == '__main__':
     unittest.main()

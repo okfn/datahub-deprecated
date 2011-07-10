@@ -1,8 +1,25 @@
+from formencode import Schema, All, validators
+
 from datahub.core import db
 from datahub.exc import NotFound
 from datahub.model import Resource, Account
 
 from datahub.logic import account
+from datahub.logic.validation import Name, URL, AvailableResourceName
+
+class ResourceSchemaState():
+    """ Used to let the AvailableResourceName validator know that the 
+    current name is taken by the resource itself. """
+
+    def __init__(self, owner_name, current_name):
+        self.owner_name = owner_name
+        self.current_name = current_name
+
+class ResourceSchema(Schema):
+    name = All(Name(), AvailableResourceName())
+    url = URL()
+    summary = validators.String(min=0, max=3000, if_missing='',
+                                if_empty='')
 
 def list_by_owner(owner_name):
     owner = account.find(owner_name)
@@ -25,8 +42,9 @@ def find(owner_name, resource_name):
 
 def create(owner_name, data):
     owner = account.find(owner_name)
-
-    # TODO: validation
+    
+    state = ResourceSchemaState(owner_name, None)
+    data = ResourceSchema().to_python(data, state=state)
 
     resource = Resource(owner, data['name'], data['url'],
                         data['summary'])
@@ -36,7 +54,12 @@ def create(owner_name, data):
     return resource
 
 def update(owner_name, resource_name, data):
+
     resource = find(owner_name, resource_name)
+    
+    # tell availablename about our current name:
+    state = ResourceSchemaState(owner_name, resource_name)
+    data = ResourceSchema().to_python(data, state=state)
 
     resource.name = data['name']
     resource.url = data['url']
