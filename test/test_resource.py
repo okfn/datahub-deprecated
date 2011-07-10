@@ -1,18 +1,20 @@
 import unittest
 import json
 
+from datadeck import core
 from datadeck import web
 
 class WebstoreTestCase(unittest.TestCase):
 
     def setUp(self):
         web.app.config['TESTING'] = True
-        web.app.config['MONGO_DB'] = 'datadeck_unittest'
+        web.app.config['SQLALCHEMY_URL'] = 'sqlite:///:memory:'
+        core.db.create_all()
         self.app = web.app.test_client()
         self.make_fixtures()
 
     def tearDown(self):
-        pass
+        core.db.drop_all()
 
     def make_fixtures(self):
         pass
