@@ -34,6 +34,9 @@ class Entity(db.Model):
     __tablename__ = 'entity'
     discriminator = db.Column('type', db.String(50))
     __mapper_args__ = {'polymorphic_on': discriminator}
+    __table_args__ = (
+        db.Index('user_namespace', 'owner_id', 'name', unique=True),
+        )
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(1000))
