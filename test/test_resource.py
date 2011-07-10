@@ -59,7 +59,14 @@ class ResourceTestCase(unittest.TestCase):
     def test_nonexistent_resource_get(self):
         res = self.app.get('/api/v1/resource/fixtures/no-such-file')
         assert res.status.startswith("404"), res.status
+        assert 'HTML' in res.data, res.data 
 
+    def test_nonexistent_resource_get_as_json(self):
+        res = self.app.get('/api/v1/resource/fixtures/no-such-file',
+                headers={'Accept': JSON})
+        assert res.status.startswith("404"), res.status
+        body = json.loads(res.data)
+        assert 'status' in body, body
 
 if __name__ == '__main__':
     unittest.main()

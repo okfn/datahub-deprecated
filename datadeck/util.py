@@ -46,8 +46,25 @@ class JSONEncoder(json.JSONEncoder):
             return obj.isoformat()
         raise TypeError("%r is not JSON serializable" % obj)
 
-def jsonify(obj, status=200):
+def jsonify(obj, status=200, headers=None):
     """ Custom JSONificaton to support obj.to_dict protocol. """
-    return Response(json.dumps(obj, cls=JSONEncoder), 
+    return Response(json.dumps(obj, cls=JSONEncoder), headers=headers,
                     status=status, mimetype='application/json')
+
+# quite hackish:
+def _response_format_from_path(app, request):
+    # This means: using <format> for anything but dot-notation is really 
+    # a bad idea here. 
+    adapter = app.create_url_adapter(request)
+    return adapter.match()[1].get('format', None)
+
+def response_format(app, request):
+    """  Use HTTP Accept headers (and suffix workarounds) to 
+    determine the representation format to be sent to the client.
+    """
+    fmt = _response_format_from_path(app, request)
+    if fmt in MIME_TYPES.values():
+        return fmt
+    neg = request.accept_mimetypes.best_match(MIME_TYPES.keys())
+    return MIME_TYPES.get(neg)
 
