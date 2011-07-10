@@ -2,3 +2,4 @@ flask>=0.7
 ipdb
 flask-sqlalchemy>=0.12
 formencode>=1.2.4
+flask-script>=0.3.1
