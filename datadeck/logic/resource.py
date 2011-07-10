@@ -1,5 +1,5 @@
 from datadeck.core import db
-from datadeck.exc import NotFound, Gone
+from datadeck.exc import NotFound
 from datadeck.model import Resource, Account
 
 from datadeck.logic import account
@@ -24,7 +24,6 @@ def find(owner_name, resource_name):
     return resource
 
 def create(owner_name, data):
-    # TODO: get a proper lookup
     owner = account.find(owner_name)
 
     # TODO: validation
