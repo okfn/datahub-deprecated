@@ -1,4 +1,3 @@
-pymongo>=1.11
 flask>=0.7
 ipdb
-flask-sqlalchemy>0.12
+flask-sqlalchemy>=0.12
