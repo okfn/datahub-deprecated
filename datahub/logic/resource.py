@@ -42,21 +42,21 @@ def find(owner_name, resource_name):
 
 def create(owner_name, data):
     owner = account.find(owner_name)
-    
+
     state = ResourceSchemaState(owner_name, None)
     data = ResourceSchema().to_python(data, state=state)
 
     resource = Resource(owner, data['name'], data['url'],
                         data['summary'])
     db.session.add(resource)
-    db.session.flush()
+    db.session.commit()
 
     return resource
 
 def update(owner_name, resource_name, data):
 
     resource = find(owner_name, resource_name)
-    
+
     # tell availablename about our current name:
     state = ResourceSchemaState(owner_name, resource_name)
     data = ResourceSchema().to_python(data, state=state)
@@ -64,14 +64,14 @@ def update(owner_name, resource_name, data):
     resource.name = data['name']
     resource.url = data['url']
     resource.summary = data['summary']
-    db.session.flush()
+    db.session.commit()
 
     return resource
 
 def delete(owner_name, resource_name):
     resource = find(owner_name, resource_name)
-    
-    db.session.delete(resource)
-    db.session.flush()
 
-    
+    db.session.delete(resource)
+    db.session.commit()
+
+

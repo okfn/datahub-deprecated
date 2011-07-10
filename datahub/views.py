@@ -16,7 +16,6 @@ def resource_create(owner):
     """ Create a new resource for the given user. """
     data = request_content(request)
     resource = logic.resource.create(owner, data)
-    db.session.commit()
     return jsonify({'status': 'ok', 'name': resource.name})
 
 @app.route('/api/v1/resource/<owner>/<resource>', methods=['GET'])
@@ -30,12 +29,10 @@ def resource_update(owner, resource):
     """ Update the data of the resource. """
     data = request_content(request)
     resource = logic.resource.update(owner, resource, data)
-    db.session.commit()
     return jsonify(resource)
 
 @app.route('/api/v1/resource/<owner>/<resource>', methods=['DELETE'])
 def resource_delete(owner, resource):
     """ Delete the resource. """
     logic.resource.delete(owner, resource)
-    db.session.commit()
     raise Gone('Successfully deleted: %s / %s' % (owner, resource))
