@@ -40,7 +40,8 @@ class ResourceTestCase(unittest.TestCase):
         data = json.dumps({'name': 'world', 'url': 'http://foos.com', 
                            'summary': 'A foo'})
         res = self.app.post('/api/v1/resource/fixtures', data=data, 
-                headers={'Accept': JSON}, content_type=JSON)
+                headers={'Accept': JSON}, content_type=JSON,
+                follow_redirects=True)
         body = json.loads(res.data)
         assert isinstance(body, dict)
 
@@ -48,7 +49,7 @@ class ResourceTestCase(unittest.TestCase):
         data = {'name': 'world', 'url': 'http://foos.com', 
                 'summary': 'A foo'}
         res = self.app.post('/api/v1/resource/fixtures', data=data, 
-                headers={'Accept': JSON})
+                headers={'Accept': JSON}, follow_redirects=True)
         body = json.loads(res.data)
         assert isinstance(body, dict)
         assert body['name']=='world', body

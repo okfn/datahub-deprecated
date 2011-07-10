@@ -1,6 +1,6 @@
-from flask import request
+from flask import request, render_template, redirect, url_for
 
-from datahub.core import app, db
+from datahub.core import app
 from datahub import logic
 from datahub.exc import Gone
 from datahub.util import request_content, jsonify
@@ -16,7 +16,8 @@ def resource_create(owner):
     """ Create a new resource for the given user. """
     data = request_content(request)
     resource = logic.resource.create(owner, data)
-    return jsonify({'status': 'ok', 'name': resource.name})
+    return redirect(url_for('resource_get', owner=owner, 
+                            resource=resource.name))
 
 @app.route('/api/v1/resource/<owner>/<resource>', methods=['GET'])
 def resource_get(owner, resource):
@@ -36,3 +37,7 @@ def resource_delete(owner, resource):
     """ Delete the resource. """
     logic.resource.delete(owner, resource)
     raise Gone('Successfully deleted: %s / %s' % (owner, resource))
+
+@app.route('/')
+def home():
+    return render_template('home.tmpl')

@@ -22,6 +22,8 @@ class ResourceSchema(Schema):
                                 if_empty='')
 
 def list_by_owner(owner_name):
+    """ Query for all resources owned by a particular account. """
+    # TODO: move to search
     owner = account.find(owner_name)
     return Resource.query.join(Resource.owner).filter(Account.name==owner.name)
 
