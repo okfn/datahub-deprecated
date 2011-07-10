@@ -2,6 +2,8 @@
 DEBUG = True
 SECRET = 'no'
 
+SITE_NAME = 'DataHub'
+
 BROKER_TRANSPORT = "sqlakombu.transport.Transport"
 CELERY_BACKEND = "database" 
 
