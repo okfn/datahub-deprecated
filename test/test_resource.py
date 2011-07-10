@@ -68,6 +68,29 @@ class ResourceTestCase(unittest.TestCase):
         body = json.loads(res.data)
         assert 'status' in body, body
 
+    def test_resource_update(self):
+        update = {'name': 'thy-file'}
+        res = self.app.put('/api/v1/resource/fixtures/no-file',
+                           data=update)
+        assert res.status.startswith("404"), res.data
+        
+        res = self.app.put('/api/v1/resource/fixtures/my-file',
+                           data=update)
+
+        res = self.app.get('/api/v1/resource/fixtures/thy-file')
+        body = json.loads(res.data)
+        assert body['name']=='thy-file', body
+
+    def test_resource_delete(self):
+        res = self.app.delete('/api/v1/resource/fixtures/no-file')
+        assert res.status.startswith("404"), res.data
+        
+        res = self.app.delete('/api/v1/resource/fixtures/my-file')
+        assert res.status.startswith("410"), res.data
+
+        res = self.app.get('/api/v1/resource/fixtures/my-file')
+        assert res.status.startswith("404"), res.data
+
 if __name__ == '__main__':
     unittest.main()
 

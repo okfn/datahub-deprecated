@@ -2,6 +2,7 @@ from flask import request
 
 from datadeck.core import app, db
 from datadeck import logic
+from datadeck.exc import Gone
 from datadeck.util import request_content, jsonify
 
 @app.route('/api/v1/resource/<owner>', methods=['GET'])
@@ -23,9 +24,13 @@ def resource_get(owner, resource):
 
 @app.route('/api/v1/resource/<owner>/<resource>', methods=['PUT'])
 def resource_update(owner, resource):
-    pass
+    data = request_content(request)
+    resource = logic.resource.update(owner, resource, data)
+    db.session.commit()
+    return jsonify(resource)
 
 @app.route('/api/v1/resource/<owner>/<resource>', methods=['DELETE'])
 def resource_delete(owner, resource):
-    pass
-
+    logic.resource.delete(owner, resource)
+    db.session.commit()
+    raise Gone('Successfully deleted: %s / %s' % (owner, resource))

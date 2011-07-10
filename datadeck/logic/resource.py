@@ -1,6 +1,6 @@
 from datadeck.core import db
-from datadeck.exc import NotFound
-from datadeck.model import Resource, Account, User
+from datadeck.exc import NotFound, Gone
+from datadeck.model import Resource, Account
 
 from datadeck.logic import account
 
@@ -34,3 +34,21 @@ def create(owner_name, data):
     db.session.flush()
 
     return resource
+
+def update(owner_name, resource_name, data):
+    resource = find(owner_name, resource_name)
+
+    resource.name = data['name']
+    db.session.flush()
+
+    return resource
+
+def delete(owner_name, resource_name):
+    resource = find(owner_name, resource_name)
+    
+    db.session.delete(resource)
+    db.session.flush()
+
+    db.session.commit()
+    raise Gone('Successfully deleted: %s / %s' % (owner_name, resource_name))
+
