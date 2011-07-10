@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 version = '0.1'
 
-setup(name='datadeck',
+setup(name='datahub',
       version=version,
       description="A platform for data wranglers",
       long_description="",
@@ -13,7 +13,7 @@ setup(name='datadeck',
         "Operating System :: POSIX",
         "Programming Language :: Python",
         "Topic :: Database"],
-      keywords='webstore rest api tables csv json',
+      keywords='webstore rest api tables csv json hub data wrangling',
       author='Open Knowledge Foundation',
       author_email='info@okfn.org',
       url='http://okfn.org',

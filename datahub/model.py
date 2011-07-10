@@ -1,5 +1,5 @@
 from datetime import datetime
-from datadeck.core import db
+from datahub.core import db
 
 class Account(db.Model):
     """ Account is generic base class for normal users and 

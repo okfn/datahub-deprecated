@@ -1,9 +1,8 @@
 from flask import request
 
-from datadeck.core import app
-from datadeck.util import response_format, jsonify
-
-from datadeck import views
+from datahub.core import app
+from datahub.util import response_format, jsonify
+from datahub import views
 
 @app.errorhandler(404)
 def handle_exceptions(exc):

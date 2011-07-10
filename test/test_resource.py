@@ -1,9 +1,9 @@
 import unittest
 import json
 
-from datadeck import core
-from datadeck import model
-from datadeck import web
+from datahub import core
+from datahub import model
+from datahub import web
 
 JSON = 'application/json'
 

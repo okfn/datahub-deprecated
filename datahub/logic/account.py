@@ -1,6 +1,6 @@
-from datadeck.core import db
-from datadeck.exc import NotFound
-from datadeck.model import Account
+from datahub.core import db
+from datahub.exc import NotFound
+from datahub.model import Account
 
 def get(name):
     """ Get will try to find an account and return None if no account

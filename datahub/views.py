@@ -1,9 +1,9 @@
 from flask import request
 
-from datadeck.core import app, db
-from datadeck import logic
-from datadeck.exc import Gone
-from datadeck.util import request_content, jsonify
+from datahub.core import app, db
+from datahub import logic
+from datahub.exc import Gone
+from datahub.util import request_content, jsonify
 
 @app.route('/api/v1/resource/<owner>', methods=['GET'])
 def resource_index(owner):

@@ -1,8 +1,8 @@
-from datadeck.core import db
-from datadeck.exc import NotFound
-from datadeck.model import Resource, Account
+from datahub.core import db
+from datahub.exc import NotFound
+from datahub.model import Resource, Account
 
-from datadeck.logic import account
+from datahub.logic import account
 
 def list_by_owner(owner_name):
     owner = account.find(owner_name)

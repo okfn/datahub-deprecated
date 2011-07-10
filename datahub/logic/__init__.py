@@ -1,4 +1,4 @@
 #
-from datadeck.logic import resource
-from datadeck.logic import account
+from datahub.logic import resource
+from datahub.logic import account
 
