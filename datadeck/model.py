@@ -30,15 +30,14 @@ class Entity(db.Model):
     name = db.Column(db.String(1000))
 
     owner_id = db.Column(db.Integer, db.ForeignKey('account.id'))
-    owner = db.relationship('Account',
-        backref=db.backref('entities', lazy='dynamic'))
-
-
+    owner = db.relationship(Account,
+                            backref=db.backref('entities', lazy='dynamic'))
 
 class Resource(Entity):
     __mapper_args__ = {'polymorphic_identity': 'resource'}
 
-    def __init__(self, name):
+    def __init__(self, owner, name):
+        self.owner = owner
         self.name = name
 
     def __repr__(self):
