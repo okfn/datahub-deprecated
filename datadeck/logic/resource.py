@@ -1,8 +1,8 @@
-from datadeck.model import Resource
+from datadeck.model import Resource, Account
 
-def list_by_user(user_name):
+def list_by_owner(owner_name):
     # TODO: check if user actually exists.
-    return Resource.query.filter_by(Resource.user.name==user_name)
+    return Resource.query.join(Resource.owner).filter(Account.name==owner_name)
 
 def create():
     pass
