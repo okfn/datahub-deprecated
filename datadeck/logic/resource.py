@@ -5,8 +5,8 @@ from datadeck.model import Resource, Account
 from datadeck.logic import account
 
 def list_by_owner(owner_name):
-    # TODO: check if user actually exists.
-    return Resource.query.join(Resource.owner).filter(Account.name==owner_name)
+    owner = account.find(owner_name)
+    return Resource.query.join(Resource.owner).filter(Account.name==owner.name)
 
 def get(owner_name, resource_name):
     """ Get will try to find a resource and return None if no resource is
@@ -49,6 +49,4 @@ def delete(owner_name, resource_name):
     db.session.delete(resource)
     db.session.flush()
 
-    db.session.commit()
-    raise Gone('Successfully deleted: %s / %s' % (owner_name, resource_name))
-
+    
