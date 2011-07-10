@@ -47,6 +47,8 @@ class ResourceTestCase(unittest.TestCase):
         res = self.app.get('/api/v1/resource/fixtures/my-file')
         body = json.loads(res.data)
         assert body['name']=='my-file', body
+        assert 'created_at' in body, body
+        assert 'updated_at' in body, body
     
     def test_nonexistent_resource_get(self):
         res = self.app.get('/api/v1/resource/fixtures/no-such-file')

@@ -31,13 +31,15 @@ def request_content(request):
         return request.form.copy()
 
 class JSONEncoder(json.JSONEncoder):
+    """ This encoder will serialize all entities that have a to_dict
+    method by calling that method and serializing the result. """
 
     def encode(self, obj):
         if hasattr(obj, 'to_dict'):
             obj = obj.to_dict()
         return super(JSONEncoder, self).encode(obj)
 
-    def default(obj):
+    def default(self, obj):
         if hasattr(obj, 'to_dict'):
             return obj.to_dict()
         if isinstance(obj, datetime):
