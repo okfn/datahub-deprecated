@@ -1,4 +1,7 @@
+from datetime import datetime
 import json
+
+from flask import Response
 
 MIME_TYPES = {
         'text/html': 'html',
@@ -26,4 +29,23 @@ def request_content(request):
     else:
         # TODO: get some kind of nested structure unrolling in here.
         return request.form.copy()
+
+class JSONEncoder(json.JSONEncoder):
+
+    def encode(self, obj):
+        if hasattr(obj, 'to_dict'):
+            obj = obj.to_dict()
+        return super(JSONEncoder, self).encode(obj)
+
+    def default(obj):
+        if hasattr(obj, 'to_dict'):
+            return obj.to_dict()
+        if isinstance(obj, datetime):
+            return obj.isoformat()
+        raise TypeError("%r is not JSON serializable" % obj)
+
+def jsonify(obj, status=200):
+    """ Custom JSONificaton to support obj.to_dict protocol. """
+    return Response(json.dumps(obj, cls=JSONEncoder), 
+                    status=status, mimetype='application/json')
 

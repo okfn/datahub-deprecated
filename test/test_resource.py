@@ -1,5 +1,4 @@
 import unittest
-import urllib
 import json
 
 from datadeck import core
@@ -7,7 +6,9 @@ from datadeck import web
 
 JSON = 'application/json'
 
-class WebstoreTestCase(unittest.TestCase):
+RESOURCE_FIXTURE = {'name': 'my-file'}
+
+class ResourceTestCase(unittest.TestCase):
 
     def setUp(self):
         web.app.config['TESTING'] = True
@@ -20,7 +21,7 @@ class WebstoreTestCase(unittest.TestCase):
         core.db.drop_all()
 
     def make_fixtures(self):
-        pass
+        self.app.post('/api/v1/resource/fixtures', data=RESOURCE_FIXTURE)
 
     def test_user_resource_index(self):
         res = self.app.get('/api/v1/resource/no_user')
@@ -41,6 +42,16 @@ class WebstoreTestCase(unittest.TestCase):
         body = json.loads(res.data)
         assert isinstance(body, dict)
         assert body['name']=='world', body
+
+    def test_resource_get(self):
+        res = self.app.get('/api/v1/resource/fixtures/my-file')
+        body = json.loads(res.data)
+        assert body['name']=='my-file', body
+    
+    def test_nonexistent_resource_get(self):
+        res = self.app.get('/api/v1/resource/fixtures/no-such-file')
+        assert res.status.startswith("404"), res.status
+
 
 if __name__ == '__main__':
     unittest.main()

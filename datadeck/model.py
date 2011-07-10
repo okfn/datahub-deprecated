@@ -9,7 +9,10 @@ class Account(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), unique=True)
-
+    
+    def to_dict(self):
+        return {'id': self.id,
+                'name': self.name}
 
 class User(Account):
     __mapper_args__ = {'polymorphic_identity': 'user'}
@@ -32,6 +35,11 @@ class Entity(db.Model):
     owner_id = db.Column(db.Integer, db.ForeignKey('account.id'))
     owner = db.relationship(Account,
                             backref=db.backref('entities', lazy='dynamic'))
+
+    def to_dict(self):
+        return {'id': self.id,
+                'name': self.name,
+                'owner': self.owner.name}
 
 class Resource(Entity):
     __mapper_args__ = {'polymorphic_identity': 'resource'}
