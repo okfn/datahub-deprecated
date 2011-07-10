@@ -28,7 +28,8 @@ def create(owner_name, data):
 
     # TODO: validation
 
-    resource = Resource(owner, data['name'])
+    resource = Resource(owner, data['name'], data['url'],
+                        data['summary'])
     db.session.add(resource)
     db.session.flush()
 
@@ -38,6 +39,8 @@ def update(owner_name, resource_name, data):
     resource = find(owner_name, resource_name)
 
     resource.name = data['name']
+    resource.url = data['url']
+    resource.summary = data['summary']
     db.session.flush()
 
     return resource

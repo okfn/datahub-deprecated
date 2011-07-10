@@ -7,7 +7,8 @@ from datahub import web
 
 JSON = 'application/json'
 
-RESOURCE_FIXTURE = {'name': 'my-file'}
+RESOURCE_FIXTURE = {'name': 'my-file', 'url': 'http://mylab.org/data.csv',
+                    'summary': 'A very neat resource!'}
 
 class ResourceTestCase(unittest.TestCase):
 
@@ -35,14 +36,16 @@ class ResourceTestCase(unittest.TestCase):
         assert len(body)==1, body
 
     def test_user_resource_create_as_json(self):
-        data = json.dumps({'name': 'world'})
+        data = json.dumps({'name': 'world', 'url': 'http://foos.com', 
+                           'summary': 'A foo'})
         res = self.app.post('/api/v1/resource/fixtures', data=data, 
                 headers={'Accept': JSON}, content_type=JSON)
         body = json.loads(res.data)
         assert isinstance(body, dict)
 
     def test_user_resource_create_as_form_data(self):
-        data = {'name': 'world'}
+        data = {'name': 'world', 'url': 'http://foos.com', 
+                'summary': 'A foo'}
         res = self.app.post('/api/v1/resource/fixtures', data=data, 
                 headers={'Accept': JSON})
         body = json.loads(res.data)
@@ -69,14 +72,14 @@ class ResourceTestCase(unittest.TestCase):
         assert 'status' in body, body
 
     def test_resource_update(self):
-        update = {'name': 'thy-file'}
+        data = RESOURCE_FIXTURE.copy() 
+        data['name'] = 'thy-file'
         res = self.app.put('/api/v1/resource/fixtures/no-file',
-                           data=update)
+                           data=data)
         assert res.status.startswith("404"), res.data
         
         res = self.app.put('/api/v1/resource/fixtures/my-file',
-                           data=update)
-
+                           data=data)
         res = self.app.get('/api/v1/resource/fixtures/thy-file')
         body = json.loads(res.data)
         assert body['name']=='thy-file', body

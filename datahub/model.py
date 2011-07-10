@@ -5,11 +5,11 @@ class Account(db.Model):
     """ Account is generic base class for normal users and 
     organizational accounts. """
     __tablename__ = 'account'
-    discriminator = db.Column('type', db.String(50))
+    discriminator = db.Column('type', db.Unicode(50))
     __mapper_args__ = {'polymorphic_on': discriminator}
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255), unique=True)
+    name = db.Column(db.Unicode(255), unique=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow,
                            onupdate=datetime.utcnow)
@@ -32,14 +32,15 @@ class User(Account):
 
 class Entity(db.Model):
     __tablename__ = 'entity'
-    discriminator = db.Column('type', db.String(50))
+    discriminator = db.Column('type', db.Unicode(50))
     __mapper_args__ = {'polymorphic_on': discriminator}
     __table_args__ = (
         db.Index('user_namespace', 'owner_id', 'name', unique=True),
         )
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(1000))
+    name = db.Column(db.Unicode(1000))
+    summary = db.Column(db.UnicodeText)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow,
                            onupdate=datetime.utcnow)
@@ -57,10 +58,13 @@ class Entity(db.Model):
 
 class Resource(Entity):
     __mapper_args__ = {'polymorphic_identity': 'resource'}
+    url = db.Column(db.Unicode(255))
 
-    def __init__(self, owner, name):
+    def __init__(self, owner, name, url, summary):
         self.owner = owner
         self.name = name
+        self.url = url
+        self.summary = summary
 
     def __repr__(self):
         return '<Resource %r>' % self.name
