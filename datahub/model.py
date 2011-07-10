@@ -30,8 +30,8 @@ class User(Account):
         return '<User %r>' % self.name
 
 
-class Entity(db.Model):
-    __tablename__ = 'entity'
+class Node(db.Model):
+    __tablename__ = 'node'
     discriminator = db.Column('type', db.Unicode(50))
     __mapper_args__ = {'polymorphic_on': discriminator}
     __table_args__ = (
@@ -47,7 +47,7 @@ class Entity(db.Model):
 
     owner_id = db.Column(db.Integer, db.ForeignKey('account.id'))
     owner = db.relationship(Account,
-                            backref=db.backref('entities', lazy='dynamic'))
+                            backref=db.backref('nodes', lazy='dynamic'))
 
     def to_dict(self):
         return {'id': self.id,
@@ -56,7 +56,7 @@ class Entity(db.Model):
                 'updated_at': self.updated_at,
                 'owner': self.owner.name}
 
-class Resource(Entity):
+class Resource(Node):
     __mapper_args__ = {'polymorphic_identity': 'resource'}
     url = db.Column(db.Unicode(255))
 
