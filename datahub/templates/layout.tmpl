@@ -37,6 +37,13 @@
         <span class="site-title">
           <a href="{{ url_for('home') }}">{{ config['SITE_NAME'] }}</a>
         </span>
+        {% if current_user.is_anonymous() %}
+          <a href="{{ url_for('login') }}">Login</a>
+          <a href="{{ url_for('register') }}">Register</a>
+        {% else %}
+          {{ current_user.full_name }}
+          <a href="{{ url_for('logout') }}">Logout</a>
+        {% endif %}
       </div>
     </header>
     <div id="main" class="site" role="main">

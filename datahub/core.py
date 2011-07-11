@@ -4,7 +4,7 @@ import warnings; warnings.filterwarnings('ignore', 'Unicode type received non-un
 
 from flask import Flask
 from flaskext.sqlalchemy import SQLAlchemy
-from flaskext.login import LoginManager
+from flaskext.login import LoginManager, current_user
 
 from datahub import default_settings
 

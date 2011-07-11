@@ -2,10 +2,14 @@ from flask import request
 
 from formencode import Invalid
 
-from datahub.core import app
+from datahub.core import app, current_user
 from datahub import logic
 from datahub.util import response_format, jsonify
 from datahub import views
+
+@app.context_processor
+def set_current_user():
+    return dict(current_user=current_user)
 
 @app.before_request
 def basic_authentication():

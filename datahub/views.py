@@ -91,5 +91,4 @@ def logout():
 
 @app.route('/')
 def home():
-    from flaskext.login import current_user
-    return render_template('home.tmpl', current_user=current_user)
+    return render_template('home.tmpl')
