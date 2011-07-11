@@ -1,7 +1,8 @@
-from flask import request, render_template, redirect, url_for
+from flask import request, render_template, redirect
+from flask import url_for, flash
 from formencode import Invalid, htmlfill
 
-from datahub.core import app, login_manager
+from datahub.core import app, login_manager, current_user
 from datahub import logic
 from datahub.exc import Gone
 from datahub.util import request_content, jsonify
@@ -52,6 +53,9 @@ def profile_update(account):
     account = logic.account.update(account, data)
     return jsonify(account)
 
+
+
+
 @app.route('/register', methods=['GET'])
 def register():
     return render_template('account/register.tmpl')
@@ -67,6 +71,23 @@ def register_save():
         return htmlfill.render(page, defaults=data, 
                 errors=inv.unpack_errors())
 
+@app.route('/profile', methods=['GET'])
+def profile():
+    return render_template('account/profile.tmpl',
+                           user=current_user)
+
+@app.route('/profile', methods=['POST'])
+def profile_save():
+    data = request_content(request)
+    try:
+        logic.user.update(current_user, data)
+        flash('Your profile has been updated.', 'success')
+        return profile()
+    except Invalid, inv:
+        page = profile()
+        return htmlfill.render(page, defaults=data, 
+                errors=inv.unpack_errors())
+
 
 @app.route('/login', methods=['GET'])
 def login():
@@ -78,6 +99,7 @@ def login_save():
     data = request_content(request)
     try:
         logic.user.login(data)
+        flash('Welcome back.', 'success')
         return redirect(url_for('home'))
     except Invalid, inv:
         page = login()

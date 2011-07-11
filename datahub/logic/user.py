@@ -17,6 +17,13 @@ class RegistrationSchema(AccountSchema):
     chained_validators = [validators.FieldsMatch(
             'password', 'password_confirm')]
 
+class ProfileSchema(AccountSchema):
+    """ Extend the account schema for user profile editing. """
+    password = validators.String(not_empty=False)
+    password_confirm = validators.String(not_empty=False)
+    chained_validators = [validators.FieldsMatch(
+            'password', 'password_confirm')]
+
 class LoginSchema(Schema):
     """ Simple schema to check login fields are present. """
     login = validators.String()
@@ -57,12 +64,26 @@ def null_get(user_name):
     return get(user_name)
 
 def register(data):
-    # tell availablename about our current name:
     state = AccountSchemaState(None)
     data = RegistrationSchema().to_python(data, state=state)
 
     user = User(data['name'], data['full_name'], data['email'],
                 hash_password(data['password']))
+    db.session.add(user)
+    db.session.commit()
+
+    return user
+
+def update(user, data):
+    state = AccountSchemaState(user.name)
+    data = ProfileSchema().to_python(data, state=state)
+
+    user.name = data['name']
+    user.full_name = data['full_name']
+    user.email = data['email']
+    if data['password']:
+        user.password = hash_password(data['password'])
+
     db.session.add(user)
     db.session.commit()
 

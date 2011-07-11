@@ -13,6 +13,7 @@ def set_current_user():
 
 @app.before_request
 def basic_authentication():
+    """ Attempt HTTP basic authentication on a per-request basis. """
     if 'Authorization' in request.headers:
         authorization = request.headers.get('Authorization')
         authorization = authorization.split(' ', 1)[-1]
@@ -22,8 +23,13 @@ def basic_authentication():
         except Invalid:
             raise Unauthorized('Invalid username or password.')
 
+@app.errorhandler(401)
+@app.errorhandler(403)
 @app.errorhandler(404)
+@app.errorhandler(410)
+@app.errorhandler(500)
 def handle_exceptions(exc):
+    """ Re-format exceptions to JSON if accept requires that. """
     format = response_format(app, request)
     if format == 'json':
         body = {'status': exc.code,

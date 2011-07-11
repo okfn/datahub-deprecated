@@ -1,0 +1,38 @@
+{% extends "layout.tmpl" %}
+
+{% block title %}
+  Settings
+{% endblock %}
+
+{% block content %}
+  <div class="box">
+    <form method="POST">
+      <dl>
+        <dt><label for="name">Login name</label></dt>
+        <dd><input name="name" value="{{ user.name }}" /></dd>
+      </dl>
+      <dl>
+        <dt><label for="full_name">Full name</label></dt>
+        <dd><input name="full_name" value="{{ user.full_name }}" /></dd>
+      </dl>
+      <dl>
+        <dt><label for="email">E-Mail</label></dt>
+        <dd><input name="email" value="{{ user.email }}" /></dd>
+      </dl>
+      <dl>
+        <dt><label for="password">Password</label></dt>
+        <dd><input type="password" name="password" value="" /></dd>
+      </dl>
+      <dl>
+        <dt><label for="password_confirm">Password (confirm)</label></dt>
+        <dd><input type="password" name="password_confirm" value="" /></dd>
+      </dl>
+      <dl>
+        <dd><input type="submit" value="Save" /></dd>
+      </dl>
+    </form>
+  </div>
+{% endblock %}
+
+
+
