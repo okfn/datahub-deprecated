@@ -29,7 +29,6 @@ class ProfileTestCase(unittest.TestCase):
     def test_account_profile_get(self):
         res = self.app.get('/api/v1/profile/no-such-user')
         assert res.status.startswith("404"), res.status
-
         res = self.app.get('/api/v1/profile/fixturix', 
                 headers={'Accept': JSON})
         assert res.status.startswith("200"), res.status
@@ -45,7 +44,7 @@ class ProfileTestCase(unittest.TestCase):
                 data=body, headers={'Accept': JSON})
         body = json.loads(res.data)
         assert body['name']=='fixturix-renamed', body
-    
+
     def test_account_profile_put_invalid_name(self):
         body = {'name': 'fixturix renamed invalid'}
         res = self.app.put('/api/v1/profile/fixturix', 
@@ -53,7 +52,7 @@ class ProfileTestCase(unittest.TestCase):
         assert res.status.startswith("400"), res
         body = json.loads(res.data)
         assert 'name' in body['errors'], body
-    
+
     def test_account_profile_put_invalid_email(self):
         body = {'name': 'fixturix', 'email': 'bar', 'full_name': 'la la'}
         res = self.app.put('/api/v1/profile/fixturix', 
