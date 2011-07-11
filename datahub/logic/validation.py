@@ -38,3 +38,15 @@ class AvailableResourceName(FancyValidator):
             state.current_name == value):
             raise Invalid('Name is taken.', value, None)
         return value
+
+class AvailableAccountName(FancyValidator):
+    """ Checks if a resource with the given name exists for the 
+    specified owner. """
+
+    def _to_python(self, value, state):
+        from datahub.logic.account import get
+        existing = get(value)
+        if existing and (state.current_name is None or \
+            not state.current_name == value):
+            raise Invalid('Name is taken.', value, None)
+        return value

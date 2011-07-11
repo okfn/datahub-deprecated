@@ -45,6 +45,14 @@ class ProfileTestCase(unittest.TestCase):
                 data=body, headers={'Accept': JSON})
         body = json.loads(res.data)
         assert body['name']=='fixturix-renamed', body
+    
+    def test_account_profile_put_invalid_name(self):
+        body = {'name': 'fixturix renamed invalid'}
+        res = self.app.put('/api/v1/profile/fixturix', 
+                data=body, headers={'Accept': JSON})
+        assert res.status.startswith("400"), res
+        body = json.loads(res.data)
+        assert 'name' in body['errors'], body
 
 if __name__ == '__main__':
     unittest.main()

@@ -16,6 +16,7 @@ class ResourceSchemaState():
         self.current_name = current_name
 
 class ResourceSchema(Schema):
+    allow_extra_fields = True
     name = All(Name(), AvailableResourceName())
     url = URL()
     summary = validators.String(min=0, max=3000, if_missing='',
