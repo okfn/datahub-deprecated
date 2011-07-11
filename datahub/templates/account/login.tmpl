@@ -1,0 +1,26 @@
+{% extends "layout.tmpl" %}
+
+{% block title %}
+  Login
+{% endblock %}
+
+{% block content %}
+  <div class="box">
+    <form method="POST">
+      <dl>
+        <dt><label for="login">Login</label></dt>
+        <dd><input name="login" value="" /></dd>
+      </dl>
+      <dl>
+        <dt><label for="password">Password</label></dt>
+        <dd><input type="password" name="password" value="" /></dd>
+      </dl>
+      <dl>
+        <dd><input type="submit" value="Login" /></dd>
+      </dl>
+    </form>
+  </div>
+{% endblock %}
+
+
+

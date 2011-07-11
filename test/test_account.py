@@ -71,6 +71,14 @@ class UserWebInterfaceTestCase(unittest.TestCase):
         core.db.create_all()
         self.app = web.app.test_client()
 
+        form_content = {'name': 'fixture', 
+                        'full_name': 'Fixture',
+                        'email': 'fixture@datahub.net',
+                        'password': 'password',
+                        'password_confirm': 'password'}
+        res = self.app.post('/register', data=form_content)
+
+
     def tearDown(self):
         core.db.drop_all()
 
@@ -88,7 +96,28 @@ class UserWebInterfaceTestCase(unittest.TestCase):
         body = json.loads(res.data)
         assert body['full_name']=='Test User', body
 
+    def test_register_user_invalid_name(self):
+        form_content = {'name': 'test user', 
+                        'full_name': 'Test User',
+                        'email': 'test_user@datahub.net',
+                        'password': 'password',
+                        'password_confirm': 'password'}
+        res = self.app.post('/register', data=form_content)
+        assert res.status.startswith("200"), res
+        res = self.app.get('/api/v1/profile/test user', 
+                headers={'Accept': JSON})
+        assert res.status.startswith("404"), res.status
 
+    def test_login_user(self):
+        form_content = {'login': 'fixture', 
+                        'password': 'password'}
+        res = self.app.post('/login', data=form_content)
+        assert res.status.startswith("302"), res
+
+        form_content = {'login': 'fixture', 
+                        'password': 'wrong password'}
+        res = self.app.post('/login', data=form_content)
+        assert res.status.startswith("200"), res
 
 if __name__ == '__main__':
     unittest.main()

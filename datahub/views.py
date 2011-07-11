@@ -67,6 +67,21 @@ def register_save():
         return htmlfill.render(page, defaults=data, 
                 errors=inv.unpack_errors())
 
+@app.route('/login', methods=['GET'])
+def login():
+    return render_template('account/login.tmpl')
+
+@app.route('/login', methods=['POST'])
+def login_save():
+    data = request_content(request)
+    try:
+        logic.user.login(data)
+        return redirect(url_for('home'))
+    except Invalid, inv:
+        page = login()
+        return htmlfill.render(page, defaults=data, 
+                errors=inv.unpack_errors())
+
 @app.route('/')
 def home():
     return render_template('home.tmpl')

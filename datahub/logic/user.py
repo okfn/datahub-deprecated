@@ -1,19 +1,24 @@
 from hashlib import sha1
 import os
 
-from formencode import validators
+from formencode import Schema, Invalid, validators
 
 from datahub.core import db
 from datahub.model import User
-from datahub.logic.account import AccountSchema, AccountSchemaState
+from datahub.logic.account import AccountSchema, AccountSchemaState, get
 
 
 class RegistrationSchema(AccountSchema):
-        password = validators.String(min=4)
-        password_confirm = validators.String()
-        chained_validators = [validators.FieldsMatch(
+    """ Extend the account schema for user registration. """
+    password = validators.String(min=4)
+    password_confirm = validators.String()
+    chained_validators = [validators.FieldsMatch(
             'password', 'password_confirm')]
 
+class LoginSchema(Schema):
+    """ Simple schema to check login fields are present. """
+    login = validators.String()
+    password = validators.String()
 
 def hash_password(password):
     """ Hash password on the fly. """
@@ -51,5 +56,17 @@ def register(data):
     db.session.add(user)
     db.session.commit()
 
+    return user
+
+def login(data):
+    data = LoginSchema().to_python(data)
+    user = get(data['login'])
+    # TODO: get rid of raising these exceptions in here.
+    if user is None:
+        raise Invalid('Invalid user name', data['login'], None,
+                      error_dict={'login': 'Invalid user name'})
+    if not validate_password(user.password, data['password']):
+        raise Invalid('Password is incorrect', data['password'], None,
+                      error_dict={'password': 'Password is incorrect'})
     return user
 
