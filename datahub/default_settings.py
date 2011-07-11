@@ -1,6 +1,6 @@
 
 DEBUG = True
-SECRET = 'no'
+SECRET_KEY = 'no'
 
 SITE_NAME = 'DataHub'
 

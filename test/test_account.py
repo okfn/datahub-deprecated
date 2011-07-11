@@ -76,7 +76,7 @@ class UserWebInterfaceTestCase(unittest.TestCase):
                         'email': 'fixture@datahub.net',
                         'password': 'password',
                         'password_confirm': 'password'}
-        res = self.app.post('/register', data=form_content)
+        self.app.post('/register', data=form_content)
 
 
     def tearDown(self):
@@ -111,8 +111,10 @@ class UserWebInterfaceTestCase(unittest.TestCase):
     def test_login_user(self):
         form_content = {'login': 'fixture', 
                         'password': 'password'}
-        res = self.app.post('/login', data=form_content)
-        assert res.status.startswith("302"), res
+        res = self.app.post('/login', data=form_content,
+                follow_redirects=True)
+        assert res.status.startswith("200"), res
+        assert 'Fixture' in res.data, res
 
         form_content = {'login': 'fixture', 
                         'password': 'wrong password'}

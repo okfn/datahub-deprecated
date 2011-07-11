@@ -1,7 +1,7 @@
 from flask import request, render_template, redirect, url_for
 from formencode import Invalid, htmlfill
 
-from datahub.core import app
+from datahub.core import app, login_manager
 from datahub import logic
 from datahub.exc import Gone
 from datahub.util import request_content, jsonify
@@ -67,9 +67,11 @@ def register_save():
         return htmlfill.render(page, defaults=data, 
                 errors=inv.unpack_errors())
 
+
 @app.route('/login', methods=['GET'])
 def login():
     return render_template('account/login.tmpl')
+login_manager.login_view = "login"
 
 @app.route('/login', methods=['POST'])
 def login_save():
@@ -84,4 +86,5 @@ def login_save():
 
 @app.route('/')
 def home():
-    return render_template('home.tmpl')
+    from flaskext.login import current_user
+    return render_template('home.tmpl', current_user=current_user)

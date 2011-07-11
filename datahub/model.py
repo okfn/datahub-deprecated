@@ -33,6 +33,18 @@ class User(Account):
         self.email = email
         self.password = password
 
+    def is_authenticated(self):
+        return True
+    
+    def is_anonymous(self):
+        return False
+
+    def is_active(self):
+        return True
+
+    def get_id(self):
+        return self.name
+    
     def __repr__(self):
         return '<User %r>' % self.name
 

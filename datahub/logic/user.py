@@ -1,11 +1,13 @@
 from hashlib import sha1
 import os
 
+from flaskext.login import login_user
 from formencode import Schema, Invalid, validators
 
-from datahub.core import db
+from datahub.core import db, login_manager
 from datahub.model import User
-from datahub.logic.account import AccountSchema, AccountSchemaState, get
+from datahub.logic.account import AccountSchema, AccountSchemaState
+from datahub.logic.account import get as get_account
 
 
 class RegistrationSchema(AccountSchema):
@@ -45,6 +47,14 @@ def validate_password(user_password, password):
     hashed_pass = sha1(password_8bit + user_password[:40])
     return user_password[40:] == hashed_pass.hexdigest()
 
+def get(user_name):
+    user = get_account(user_name)
+    if isinstance(user, User):
+        return user
+
+@login_manager.user_loader
+def null_get(user_name):
+    return get(user_name)
 
 def register(data):
     # tell availablename about our current name:
@@ -68,5 +78,6 @@ def login(data):
     if not validate_password(user.password, data['password']):
         raise Invalid('Password is incorrect', data['password'], None,
                       error_dict={'password': 'Password is incorrect'})
+    login_user(user)
     return user
 
