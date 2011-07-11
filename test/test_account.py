@@ -127,12 +127,30 @@ class UserWebInterfaceTestCase(unittest.TestCase):
                 headers={'Authorization': 'Basic ' + auth})
         assert res.status.startswith("200"), res
         assert 'Fixture' in res.data, res
-    
+
     def test_basic_auth_invalid_credentials(self):
         auth = 'fixture:buzzword'.encode('base64')
         res = self.app.get('/', 
                 headers={'Authorization': 'Basic ' + auth})
         assert res.status.startswith("401"), res
+
+    def test_edit_profile(self):
+        auth = 'Basic ' + 'fixture:password'.encode('base64')
+        res = self.app.get('/profile', 
+                headers={'Authorization': auth})
+        assert res.status.startswith("200"), res
+        assert 'fixture@datahub.net' in res.data, res
+
+        form_content = {'name': 'fixture', 
+                        'full_name': 'Test User',
+                        'email': 'test_user@datahub.net',
+                        'password': 'password',
+                        'password_confirm': 'password'}
+        res = self.app.post('/profile', data=form_content,
+                headers={'Authorization': auth})
+        assert res.status.startswith("200"), res
+        assert 'test_user@datahub.net' in res.data, res
+        assert 'fixture@datahub.net' not in res.data, res
 
 if __name__ == '__main__':
     unittest.main()

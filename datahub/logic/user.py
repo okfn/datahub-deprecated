@@ -75,6 +75,7 @@ def register(data):
     return user
 
 def update(user, data):
+    # TODO combine with account.update
     state = AccountSchemaState(user.name)
     data = ProfileSchema().to_python(data, state=state)
 
