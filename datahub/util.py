@@ -1,6 +1,7 @@
 from datetime import datetime
 import json
 
+from werkzeug.exceptions import NotFound
 from flask import Response
 
 MIME_TYPES = {
@@ -56,7 +57,10 @@ def _response_format_from_path(app, request):
     # This means: using <format> for anything but dot-notation is really 
     # a bad idea here. 
     adapter = app.create_url_adapter(request)
-    return adapter.match()[1].get('format', None)
+    try:
+        return adapter.match()[1].get('format', None)
+    except NotFound:
+        return None
 
 def response_format(app, request):
     """  Use HTTP Accept headers (and suffix workarounds) to 
