@@ -22,7 +22,7 @@ class ProfileTestCase(unittest.TestCase):
 
     def make_fixtures(self):
         # TODO: call logic layer instead, once there is one:
-        user = model.User('fixturix')
+        user = model.User('fixturix', 'Mr. Fixture', 'fix@ture.org')
         core.db.session.add(user)
         core.db.session.commit()
 
@@ -53,6 +53,14 @@ class ProfileTestCase(unittest.TestCase):
         assert res.status.startswith("400"), res
         body = json.loads(res.data)
         assert 'name' in body['errors'], body
+    
+    def test_account_profile_put_invalid_email(self):
+        body = {'name': 'fixturix', 'email': 'bar', 'full_name': 'la la'}
+        res = self.app.put('/api/v1/profile/fixturix', 
+                data=body, headers={'Accept': JSON})
+        assert res.status.startswith("400"), res
+        body = json.loads(res.data)
+        assert 'email' in body['errors'], body
 
 if __name__ == '__main__':
     unittest.main()

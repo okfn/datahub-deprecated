@@ -16,6 +16,8 @@ class AccountSchemaState():
 class AccountSchema(Schema):
     allow_extra_fields = True
     name = All(Name(), AvailableAccountName())
+    full_name = validators.String(min=1, max=2000)
+    email = validators.Email(if_empty=None, if_missing=None)
 
 def get(name):
     """ Get will try to find an account and return None if no account
@@ -38,6 +40,9 @@ def update(account_name, data):
     data = AccountSchema().to_python(data, state=state)
 
     account.name = data['name']
+    account.full_name = data['full_name']
+    if 'email' in data and data['email'] is not None:
+        account.full_name = data['full_name']
     db.session.commit()
     return account
 

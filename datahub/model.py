@@ -10,6 +10,8 @@ class Account(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Unicode(255), unique=True)
+    full_name = db.Column(db.Unicode(2000))
+    email = db.Column(db.Unicode(2000))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow,
                            onupdate=datetime.utcnow)
@@ -18,13 +20,16 @@ class Account(db.Model):
         return {'id': self.id,
                 'created_at': self.created_at,
                 'updated_at': self.updated_at,
-                'name': self.name}
+                'name': self.name,
+                'full_name': self.full_name}
 
 class User(Account):
     __mapper_args__ = {'polymorphic_identity': 'user'}
 
-    def __init__(self, name):
+    def __init__(self, name, full_name, email):
         self.name = name
+        self.full_name = full_name
+        self.email = email
 
     def __repr__(self):
         return '<User %r>' % self.name
