@@ -5,4 +5,5 @@ formencode>=1.2.4
 flask-script>=0.3.1
 kombu-sqlalchemy>=1.1.0
 Flask-Celery>=2.2.5
+Flask-Login>=0.1
 

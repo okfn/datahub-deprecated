@@ -25,11 +25,13 @@ class Account(db.Model):
 
 class User(Account):
     __mapper_args__ = {'polymorphic_identity': 'user'}
+    password = db.Column(db.Unicode(2000))
 
-    def __init__(self, name, full_name, email):
+    def __init__(self, name, full_name, email, password):
         self.name = name
         self.full_name = full_name
         self.email = email
+        self.password = password
 
     def __repr__(self):
         return '<User %r>' % self.name

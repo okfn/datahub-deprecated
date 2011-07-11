@@ -25,7 +25,8 @@ class ResourceTestCase(unittest.TestCase):
 
     def make_fixtures(self):
         # TODO: call logic layer instead, once there is one:
-        user = model.User('fixtures', 'Mr. Fixture', 'fix@ture.org')
+        user = model.User('fixtures', 'Mr. Fixture', 'fix@ture.org',
+                          'secret')
         core.db.session.add(user)
         core.db.session.commit()
 

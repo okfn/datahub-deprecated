@@ -58,7 +58,7 @@ def _response_format_from_path(app, request):
     # a bad idea here. 
     adapter = app.create_url_adapter(request)
     try:
-        return adapter.match()[1].get('format', None)
+        return adapter.match()[1].get('format')
     except NotFound:
         return None
 

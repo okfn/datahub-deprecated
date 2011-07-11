@@ -1,4 +1,5 @@
 from flask import request, render_template, redirect, url_for
+from formencode import Invalid, htmlfill
 
 from datahub.core import app
 from datahub import logic
@@ -50,6 +51,21 @@ def profile_update(account):
     data = request_content(request)
     account = logic.account.update(account, data)
     return jsonify(account)
+
+@app.route('/register', methods=['GET'])
+def register():
+    return render_template('account/register.tmpl')
+
+@app.route('/register', methods=['POST'])
+def register_save():
+    data = request_content(request)
+    try:
+        logic.user.register(data)
+        return redirect(url_for('home'))
+    except Invalid, inv:
+        page = register()
+        return htmlfill.render(page, defaults=data, 
+                errors=inv.unpack_errors())
 
 @app.route('/')
 def home():
