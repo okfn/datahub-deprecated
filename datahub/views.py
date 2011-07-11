@@ -58,7 +58,7 @@ def profile_update(account):
 
 @app.route('/register', methods=['GET'])
 def register():
-    return render_template('account/register.tmpl')
+    return render_template('account/register.html')
 
 @app.route('/register', methods=['POST'])
 def register_save():
@@ -73,7 +73,7 @@ def register_save():
 
 @app.route('/profile', methods=['GET'])
 def profile():
-    return render_template('account/profile.tmpl',
+    return render_template('account/profile.html',
                            user=current_user)
 
 @app.route('/profile', methods=['POST'])
@@ -91,7 +91,7 @@ def profile_save():
 
 @app.route('/login', methods=['GET'])
 def login():
-    return render_template('account/login.tmpl')
+    return render_template('account/login.html')
 login_manager.login_view = "login"
 
 @app.route('/login', methods=['POST'])
@@ -113,4 +113,4 @@ def logout():
 
 @app.route('/')
 def home():
-    return render_template('home.tmpl')
+    return render_template('home.html')
