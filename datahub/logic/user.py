@@ -1,7 +1,7 @@
 from hashlib import sha1
 import os
 
-from flaskext.login import login_user
+from flaskext.login import login_user, logout_user
 from formencode import Schema, Invalid, validators
 
 from datahub.core import db, login_manager
@@ -81,3 +81,5 @@ def login(data):
     login_user(user)
     return user
 
+def logout():
+    logout_user()

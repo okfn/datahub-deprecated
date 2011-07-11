@@ -120,6 +120,13 @@ class UserWebInterfaceTestCase(unittest.TestCase):
                         'password': 'wrong password'}
         res = self.app.post('/login', data=form_content)
         assert res.status.startswith("200"), res
+    
+    def test_basic_auth(self):
+        auth = 'fixture:password'.encode('base64')
+        res = self.app.get('/', 
+                headers={'Authorization': 'Basic ' + auth})
+        assert res.status.startswith("200"), res
+        assert 'Fixture' in res.data, res
 
 if __name__ == '__main__':
     unittest.main()

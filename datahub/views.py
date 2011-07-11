@@ -84,6 +84,11 @@ def login_save():
         return htmlfill.render(page, defaults=data, 
                 errors=inv.unpack_errors())
 
+@app.route("/logout")
+def logout():
+    logic.user.logout()
+    return redirect(url_for('home'))
+
 @app.route('/')
 def home():
     from flaskext.login import current_user

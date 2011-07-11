@@ -3,8 +3,17 @@ from flask import request
 from formencode import Invalid
 
 from datahub.core import app
+from datahub import logic
 from datahub.util import response_format, jsonify
 from datahub import views
+
+@app.before_request
+def basic_authentication():
+    if 'Authorization' in request.headers:
+        authorization = request.headers.get('Authorization')
+        authorization = authorization.split(' ', 1)[-1]
+        login, password = authorization.decode('base64').split(':', 1)
+        logic.user.login({'login': login, 'password': password})
 
 @app.errorhandler(404)
 def handle_exceptions(exc):
