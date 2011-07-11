@@ -38,6 +38,19 @@ def resource_delete(owner, resource):
     logic.resource.delete(owner, resource)
     raise Gone('Successfully deleted: %s / %s' % (owner, resource))
 
+@app.route('/api/v1/profile/<account>', methods=['GET'])
+def profile_get(account):
+    """ Get a JSON representation of the account. """
+    account = logic.account.find(account)
+    return jsonify(account)
+
+@app.route('/api/v1/profile/<account>', methods=['PUT'])
+def profile_update(account):
+    """ Update the data of the account profile. """
+    data = request_content(request)
+    account = logic.account.update(account, data)
+    return jsonify(account)
+
 @app.route('/')
 def home():
     return render_template('home.tmpl')
