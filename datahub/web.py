@@ -1,5 +1,5 @@
-from flask import request
-
+from flask import Response, request
+from werkzeug.exceptions import Unauthorized
 from formencode import Invalid
 
 from datahub.core import app, current_user
@@ -17,7 +17,10 @@ def basic_authentication():
         authorization = request.headers.get('Authorization')
         authorization = authorization.split(' ', 1)[-1]
         login, password = authorization.decode('base64').split(':', 1)
-        logic.user.login({'login': login, 'password': password})
+        try:
+            logic.user.login({'login': login, 'password': password})
+        except Invalid:
+            raise Unauthorized('Invalid username or password.')
 
 @app.errorhandler(404)
 def handle_exceptions(exc):
@@ -39,7 +42,8 @@ def handle_invalid(exc):
                 'description': unicode(exc),
                 'errors': exc.unpack_errors()}
         return jsonify(body, status=400)
-    return exc
+    return Response(repr(exc.unpack_errors()), status=400, 
+                    mimetype='text/plain')
 
 
 if __name__ == "__main__":

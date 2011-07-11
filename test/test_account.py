@@ -127,6 +127,12 @@ class UserWebInterfaceTestCase(unittest.TestCase):
                 headers={'Authorization': 'Basic ' + auth})
         assert res.status.startswith("200"), res
         assert 'Fixture' in res.data, res
+    
+    def test_basic_auth_invalid_credentials(self):
+        auth = 'fixture:buzzword'.encode('base64')
+        res = self.app.get('/', 
+                headers={'Authorization': 'Basic ' + auth})
+        assert res.status.startswith("401"), res
 
 if __name__ == '__main__':
     unittest.main()
