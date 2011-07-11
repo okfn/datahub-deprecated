@@ -42,7 +42,7 @@ def update(account_name, data):
     account.name = data['name']
     account.full_name = data['full_name']
     if 'email' in data and data['email'] is not None:
-        account.full_name = data['full_name']
+        account.email = data['email']
     db.session.commit()
     return account
 
