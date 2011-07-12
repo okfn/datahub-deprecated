@@ -257,6 +257,12 @@ footer .site {
 }
 
 /* Forms */
+form h3 {
+  font-weight: normal; 
+  font-size: 1.2em;
+  margin-bottom: 0.5em;
+}
+
 form dl {
   margin-bottom: 0.5em;
 }
@@ -272,6 +278,11 @@ form label {
 form p {
   color: #888;
   font-size: 0.9em;
+  margin-bottom: 1em;
+}
+
+form dt p {
+  margin-bottom: 0.2em;
 }
 
 form input {
@@ -356,7 +367,6 @@ form input[type=submit]:active {
 
 .resource-item .name {
   font-size: 1.1em;
-  font-weight: bold;
 }
 
 .resource-item .url {
