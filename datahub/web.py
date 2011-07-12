@@ -1,4 +1,5 @@
 from flask import Response, request
+from flaskext.gravatar import Gravatar
 from werkzeug.exceptions import Unauthorized
 from formencode import Invalid
 
@@ -6,6 +7,10 @@ from datahub.core import app, current_user
 from datahub import logic
 from datahub.util import response_format, jsonify
 from datahub import views
+
+gravatar = Gravatar(app, size=32, rating='g',
+                    default='retro')
+
 
 @app.context_processor
 def set_current_user():

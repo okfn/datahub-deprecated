@@ -6,11 +6,18 @@
 {% endblock %}
 
 {% block content %}
-  <div class="box">
-    <h1>{{ account.name }}</h1>
-    <p>Is at {{ account.email }}</p>
-    <ul>
-    </ul>
+<h1><img src="{{ account.email | gravatar(size=32) }}" /> {{ account.name }}</h1>
+  <div class="rightbar">
+    <div class="box">
+      Here is where the activity stream will be.
+    </div>
+  </div>
+  <div class="leftbar">
+    <div class="box">
+      <p>Is at {{ account.email }}</p>
+      <ul>
+      </ul>
+    </div>
   </div>
 {% endblock %}
 

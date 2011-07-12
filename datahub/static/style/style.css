@@ -103,7 +103,13 @@ a:hover {
 }
 
 h1 {
-  font-size: 1.3em;
+  font-size: 2em;
+  font-weight: normal;
+  margin-bottom: 0.8em;
+}
+
+h1 img {
+  margin-bottom: -7px;
 }
 
 .flashes {
@@ -131,6 +137,8 @@ h1 {
 header {
   padding-top: 0.7em;
   padding-bottom: 0.5em;
+
+  border-bottom: 2px solid #999;
 
   background-color: #444444;
   background-image: -webkit-gradient(linear, left top, left bottom, from(#444444), to(#222222)); 
@@ -167,10 +175,10 @@ header .site-title a {
 }
 
 footer {
-  border-top: 1px solid #ddd;
+  border-top: 1px solid #ccc;
   margin: 25px 0 0 0;
   padding: 20px 0 20px 0;
-  background-color: #e1e1e1;
+  background-color: #d1d1d1;
 }
 
 footer ul.links {
@@ -194,6 +202,32 @@ footer .site {
 
 .box {
   padding: 1em;
+  background: #fff;
+  border-radius: 7px;
+
+     -moz-box-shadow: 0px 0px 3px #bbb;
+  -webkit-box-shadow: 0px 0px 3px #bbb;
+          box-shadow: 0px 0px 3px #bbb;
+}
+
+.mainbar {
+  width: 525px;
+  margin-right: 10px;
+}
+
+.sidebar {
+  float: right;
+  width: 265px;
+}
+
+.leftbar {
+  width: 395px;
+  margin-right: 10px;
+}
+
+.rightbar {
+  width: 395px;
+  float: right;
 }
 
 /* Search */

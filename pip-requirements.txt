@@ -6,4 +6,5 @@ flask-script>=0.3.1
 kombu-sqlalchemy>=1.1.0
 Flask-Celery>=2.2.5
 Flask-Login>=0.1
+Flask-Gravatar>=0.2.2
 pyes>=0.16
