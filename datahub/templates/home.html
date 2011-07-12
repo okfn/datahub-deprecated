@@ -6,8 +6,9 @@
 {% endblock %}
 
 {% block content %}
+  <h1>Data wranglers of the world, unite!</h1>
   <div class="box">
-    <h1>TEMP: Account Listing.</h1>
+    // FIXME: Listing of users.
     <ul>
       {% for account in accounts %}
       <li><a href="{{ url_for('account', account=account.name) }}">{{
@@ -16,5 +17,4 @@
     </ul>
   </div>
 {% endblock %}
-
 

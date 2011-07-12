@@ -121,7 +121,10 @@ class ResourceTestCase(unittest.TestCase):
         data = json.loads(res.data)
         assert 'name' in data['errors'], data
 
-
+    def test_wui_resource_get(self):
+        res = self.app.get('/fixtures/my-file')
+        assert res.status.startswith("200"), res.status
+        assert 'A very neat resource' in res.data, res.data
 
 
 if __name__ == '__main__':

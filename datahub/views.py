@@ -53,6 +53,12 @@ def profile_update(account):
     account = logic.account.update(account, data)
     return jsonify(account)
 
+@app.route('/<owner>/<node>')
+def node(owner, node):
+    # FIXME: query for node, not resource
+    resource = logic.resource.find(owner, node)
+    return render_template('resource/view.html',
+                resource=resource)
 
 @app.route('/<account>')
 def account(account):

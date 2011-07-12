@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}
+  {{ resource.owner.name }} / {{ resource.name }}
+{% endblock %}
+
+{% block content %}
+  <h1><img src="{{ resource.owner.email | gravatar(size=32) }}" /> 
+    <a href="{{ url_for('account', account=resource.owner.name) }}">{{ resource.owner.name }}</a>
+    / <strong>{{ resource.name }}</strong></h1>
+  <div class="sidebar">
+    <div class="box">
+    </div>
+  </div>
+  <div class="mainbar">
+    <div class="box">
+      {{ resource.summary }}
+    </div>
+  </div>
+{% endblock %}
+
+

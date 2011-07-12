@@ -1,4 +1,4 @@
-{% import "macros.html" as macros %}
+{% from "resource/parts.html" import create_form as resource_create_form %}
 {% extends "layout.html" %}
 
 {% block title %}
@@ -6,7 +6,8 @@
 {% endblock %}
 
 {% block content %}
-<h1><img src="{{ account.email | gravatar(size=32) }}" /> {{ account.name }}</h1>
+  <h1><img src="{{ account.email | gravatar(size=32) }}" /> 
+    <strong>{{ account.name }}</strong> ({{ account.full_name}})</h1>
   <div class="rightbar">
     <div class="box">
       Here is where the activity stream will be.
@@ -17,6 +18,7 @@
       <p>Is at {{ account.email }}</p>
       <ul>
       </ul>
+      {{ resource_create_form() }}
     </div>
   </div>
 {% endblock %}
