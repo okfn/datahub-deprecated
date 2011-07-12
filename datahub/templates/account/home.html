@@ -1,3 +1,4 @@
+{% from "account/parts.html" import account_heading %}
 {% from "resource/parts.html" import create_form as resource_create_form %}
 {% from "resource/parts.html" import mainbar_list_item as resource_mainbar_list_item %}
 {% extends "layout.html" %}
@@ -7,24 +8,22 @@
 {% endblock %}
 
 {% block content %}
-  <h1><img src="{{ account.email | gravatar(size=32) }}" /> 
-    <strong>{{ account.name }}</strong> ({{ account.full_name}})</h1>
+  {{ account_heading(account) }}
   <div class="rightbar">
     <div class="box">
+      <h2>Recent Activity</h2>
       Here is where the activity stream will be.
     </div>
   </div>
   <div class="leftbar">
     <div class="box">
-      <p>Is at {{ account.email }}</p>
-
-      // FIXME: Node list from DB, not ES.
+      <h2>Resources &amp; Datasets</h2>
+      <p>// FIXME: Node list from DB, not ES.</p>
       <ul class="resource-list">
         {% for node in account.nodes %}
           {{ resource_mainbar_list_item(node) }}
         {% endfor %}
       </ul>
-      {{ resource_create_form() }}
     </div>
   </div>
 {% endblock %}

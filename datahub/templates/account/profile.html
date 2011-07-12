@@ -1,3 +1,4 @@
+{% from "account/parts.html" import account_heading %}
 {% extends "layout.html" %}
 
 {% block title %}
@@ -5,6 +6,7 @@
 {% endblock %}
 
 {% block content %}
+  {{ account_heading(user) }}
   <div class="mainbar">
     <div class="box">
       <h2>Update your settings</h2>
@@ -12,7 +14,7 @@
         <dl>
           <dt><label for="name">Login name</label>
             <p>
-              Changing your login will modify all your resource URLs. 
+              Changing your login will break all your resource URLs. 
             </p>
           </dt>
           <dd><input name="name" value="{{ user.name }}" /></dd>

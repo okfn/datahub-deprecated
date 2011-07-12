@@ -28,7 +28,9 @@
             <a href="{{ url_for('login') }}">Login</a>
             <a href="{{ url_for('register') }}">Register</a>
           {% else %}
-            {{ current_user.full_name }}
+            <a href="{{ url_for('account', account=current_user.name) }}">{{
+              current_user.full_name }}</a>
+            <a href="{{ url_for('home') }}">Dashboard</a>
             <a href="{{ url_for('profile') }}">Settings</a>
             <a href="{{ url_for('logout') }}">Logout</a>
           {% endif %}
@@ -53,6 +55,7 @@
         - No Content -
       {% endblock %}
     </div>
+    <div class="clearfix"></div>
     <footer>
       <div class="site">
         &copy; 2011: An <a href="http://okfn.org">Open Knowledge Foundation</a>
