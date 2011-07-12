@@ -7,7 +7,13 @@
 
 {% block content %}
   <div class="box">
-    Hello, World! 
+    <h1>TEMP: Account Listing.</h1>
+    <ul>
+      {% for account in accounts %}
+      <li><a href="{{ url_for('account', account=account.name) }}">{{
+        account.name }}</a></li>
+      {% endfor %}
+    </ul>
   </div>
 {% endblock %}
 

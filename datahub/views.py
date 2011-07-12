@@ -54,7 +54,11 @@ def profile_update(account):
     return jsonify(account)
 
 
-
+@app.route('/<account>')
+def account(account):
+    account = logic.account.find(account)
+    return render_template('account/home.html',
+                account=account)
 
 @app.route('/register', methods=['GET'])
 def register():
@@ -88,7 +92,6 @@ def profile_save():
         return htmlfill.render(page, defaults=data, 
                 errors=inv.unpack_errors())
 
-
 @app.route('/login', methods=['GET'])
 def login():
     return render_template('account/login.html')
@@ -113,4 +116,7 @@ def logout():
 
 @app.route('/')
 def home():
-    return render_template('home.html')
+    # FIXME: Figure out what to put here and seperate home and dashboard
+    from datahub.model import Account
+    accounts = Account.query.all()
+    return render_template('home.html', accounts=accounts)
