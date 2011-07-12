@@ -7,18 +7,16 @@ from datahub import web
 
 JSON = 'application/json'
 
+from util import make_test_app, tear_down_test_app
 
 class ProfileTestCase(unittest.TestCase):
 
     def setUp(self):
-        web.app.config['TESTING'] = True
-        web.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
-        core.db.create_all()
-        self.app = web.app.test_client()
+        self.app = make_test_app()
         self.make_fixtures()
 
     def tearDown(self):
-        core.db.drop_all()
+        tear_down_test_app()
 
     def make_fixtures(self):
         # TODO: call logic layer instead, once there is one:
@@ -65,11 +63,11 @@ class ProfileTestCase(unittest.TestCase):
 
 class UserWebInterfaceTestCase(unittest.TestCase):
 
+    def tearDown(self):
+        tear_down_test_app()
+    
     def setUp(self):
-        web.app.config['TESTING'] = True
-        web.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
-        core.db.create_all()
-        self.app = web.app.test_client()
+        self.app = make_test_app()
 
         form_content = {'name': 'fixture', 
                         'full_name': 'Fixture',
@@ -77,10 +75,6 @@ class UserWebInterfaceTestCase(unittest.TestCase):
                         'password': 'password',
                         'password_confirm': 'password'}
         self.app.post('/register', data=form_content)
-
-
-    def tearDown(self):
-        core.db.drop_all()
 
     def test_register_user(self):
         form_content = {'name': 'test_user', 

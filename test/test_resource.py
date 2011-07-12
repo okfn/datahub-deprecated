@@ -11,17 +11,16 @@ RESOURCE_FIXTURE = {'name': 'my-file',
                     'url': 'http://mylab.org/data.csv',
                     'summary': 'A very neat resource!'}
 
+from util import make_test_app, tear_down_test_app
+
 class ResourceTestCase(unittest.TestCase):
 
     def setUp(self):
-        web.app.config['TESTING'] = True
-        web.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
-        core.db.create_all()
-        self.app = web.app.test_client()
+        self.app = make_test_app()
         self.make_fixtures()
 
     def tearDown(self):
-        core.db.drop_all()
+        tear_down_test_app()
 
     def make_fixtures(self):
         # TODO: call logic layer instead, once there is one:

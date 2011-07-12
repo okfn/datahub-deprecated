@@ -12,7 +12,18 @@ install_celery_commands(manager)
 def createdb():
     """ Create the SQLAlchemy database. """
     db.create_all()
+    resetsearch()
 
+
+@manager.command
+def resetsearch():
+    """ Reset the elatic search index (without rebuilding). """
+    from datahub.logic.search import index_name, connection
+    conn = connection()
+    try:
+        conn.delete_index(index_name())
+    except: pass
+    conn.create_index(index_name())
 
 
 if __name__ == '__main__':
