@@ -15,7 +15,7 @@ class AccountSchemaState():
 
 class AccountSchema(Schema):
     allow_extra_fields = True
-    name = All(Name(), AvailableAccountName())
+    name = All(Name(not_empty=True), AvailableAccountName())
     full_name = validators.String(min=1, max=2000)
     email = validators.Email(if_empty=None, if_missing=None)
 

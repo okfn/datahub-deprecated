@@ -113,6 +113,24 @@ class ResourceTestCase(unittest.TestCase):
         data = json.loads(res.data)
         assert 'url' in data['errors'], data
 
+    def test_create_missing_data(self):
+        data = RESOURCE_FIXTURE.copy()
+        data['name'] = 'foo'
+        data['url'] = ''
+        res = self.app.post('/api/v1/resource/fixtures', data=data, 
+                            headers={'Accept': JSON})
+        assert res.status.startswith("400"), res
+        data = json.loads(res.data)
+        assert 'url' in data['errors'], data
+
+        data = RESOURCE_FIXTURE.copy() 
+        data['name'] = ''
+        res = self.app.post('/api/v1/resource/fixtures', data=data, 
+                            headers={'Accept': JSON})
+        assert res.status.startswith("400"), res
+        data = json.loads(res.data)
+        assert 'name' in data['errors'], data
+
     def test_create_existing_name(self):
         res = self.app.post('/api/v1/resource/fixtures', 
                             data=RESOURCE_FIXTURE, 

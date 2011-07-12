@@ -2,16 +2,16 @@ import re
 
 from formencode import FancyValidator, Invalid
 
-VALID_NAME = re.compile(r"^[a-zA-Z0-9_\-]{1,1999}$")
+VALID_NAME = re.compile(r"^[a-zA-Z0-9_\-]{2,1999}$")
 
 class Name(FancyValidator):
     """ Check if a given name is valid for resources, datasets or 
     users. """
 
     def _to_python(self, value, state):
-        if not VALID_NAME.match(value):
-            raise Invalid('Invalid name.', value, None)
-        return value
+        if VALID_NAME.match(value):
+            return value
+        raise Invalid('Invalid name.', value, None)
 
 
 class URL(FancyValidator):

@@ -271,6 +271,11 @@ form dt {
   margin-bottom: 0.2em;
 }
 
+form .error-message {
+  font-weight: bold; 
+  color: red;
+}
+
 form label {
   font-weight: bold;
 }

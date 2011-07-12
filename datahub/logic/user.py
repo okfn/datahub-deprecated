@@ -12,6 +12,7 @@ from datahub.logic.account import get as get_account
 
 class RegistrationSchema(AccountSchema):
     """ Extend the account schema for user registration. """
+    email = validators.Email(not_empty=True)
     password = validators.String(min=4)
     password_confirm = validators.String()
     chained_validators = [validators.FieldsMatch(
@@ -19,6 +20,7 @@ class RegistrationSchema(AccountSchema):
 
 class ProfileSchema(AccountSchema):
     """ Extend the account schema for user profile editing. """
+    email = validators.Email(not_empty=True)
     password = validators.String(not_empty=False)
     password_confirm = validators.String(not_empty=False)
     chained_validators = [validators.FieldsMatch(
