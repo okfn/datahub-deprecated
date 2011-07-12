@@ -3,7 +3,6 @@ import json
 
 from datahub import core
 from datahub import model
-from datahub import web
 
 JSON = 'application/json'
 
