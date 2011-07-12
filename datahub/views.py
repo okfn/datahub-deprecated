@@ -59,7 +59,25 @@ def node(owner, node):
     resource = logic.resource.find(owner, node)
     return render_template('resource/view.html',
                 resource=resource)
-    
+
+@app.route('/<owner>', methods=['POST'])
+def node_create(owner):
+    """ Create a new node for the given user. """
+    # FIXME: handle different kinds of nodes.
+    data = request_content(request)
+    try:
+        resource = logic.resource.create(owner, data)
+        return redirect(url_for('node', owner=owner, 
+                                node=resource.name))
+    except Invalid, inv:
+        page = dashboard()
+        return htmlfill.render(page, defaults=data, 
+                errors=inv.unpack_errors())
+
+def dashboard():
+    return render_template('account/dashboard.html',
+                account=account)
+
 @app.route('/<account>')
 def account(account):
     account = logic.account.find(account)
@@ -123,7 +141,9 @@ def logout():
 
 @app.route('/')
 def home():
-    # FIXME: Figure out what to put here and seperate home and dashboard
+    if not current_user.is_anonymous():
+        return dashboard()
+    # FIXME: Figure out what to put here
     from datahub.model import Account
     accounts = Account.query.all()
     return render_template('home.html', accounts=accounts)

@@ -1,0 +1,24 @@
+{% from "resource/parts.html" import create_form as resource_create_form %}
+{% from "resource/parts.html" import mainbar_list_item as resource_mainbar_list_item %}
+{% extends "layout.html" %}
+
+{% block title %}
+  Dashboard
+{% endblock %}
+
+{% block content %}
+  <div class="sidebar">
+    <div class="nobox">
+      {{ resource_create_form(current_user) }}
+    </div>
+  </div>
+  <div class="mainbar">
+    <div class="box">
+      <h2>{{ current_user.name }}'s datastream</h2>
+      Here is where the activity stream will be.
+    </div>
+  </div>
+{% endblock %}
+
+
+

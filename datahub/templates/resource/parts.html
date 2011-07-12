@@ -5,14 +5,20 @@
         src="/static/img/icons/link.png" alt="Download" /></a></span>
     <span class="name"><a href="{{ url_for('account', account=resource.owner.name)
         }}">{{ resource.owner.name }}</a> /
-    <a href="{{ url_for('node', owner=resource.owner.name, node=resource.name)
-        }}">{{ resource.name }}</a></span>
+    <strong><a href="{{ url_for('node', owner=resource.owner.name, node=resource.name)
+        }}">{{ resource.name }}</a></strong></span>
     <p>{{ resource.summary }}</p>
   </li>
 {% endmacro %}
 
-{% macro create_form() %}
-  <form class="resource-create">
+{% macro create_form(user) %}
+  <form action="{{ url_for('node_create', owner=user.name) }}" 
+    method="POST" class="resource-create">
+    <h3>Create a resource</h3>
+    <p>
+      Resources are references to an individual item like a spreadsheet, 
+      database or API endpoint.
+    </p>
     <dl>
       <dt><label for="name">Name</label></dt>
       <dd><input name="name" value="" /></dd>
