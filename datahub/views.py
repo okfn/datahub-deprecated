@@ -112,6 +112,7 @@ def login_save():
 @app.route("/logout")
 def logout():
     logic.user.logout()
+    flash('You have been logged out.', 'success')
     return redirect(url_for('home'))
 
 @app.route('/')

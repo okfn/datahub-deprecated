@@ -19,34 +19,35 @@
   <link rel="stylesheet" href="/static/style/style.css?v=2">
   {% block head %} {% endblock %}
 </head>
-
 <body>
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      <ul class="flashes">
-      {% for category, message in messages %}
-        <li class="{{ category }}">{{ message }}</li>
-      {% endfor %}
-      </ul>
-    {% endif %}
-  {% endwith %}
-
   <div id="container" class="container">
     <header>
       <div class="site">
+        <div class="account-menu">
+          {% if current_user.is_anonymous() %}
+            <a href="{{ url_for('login') }}">Login</a>
+            <a href="{{ url_for('register') }}">Register</a>
+          {% else %}
+            {{ current_user.full_name }}
+            <a href="{{ url_for('profile') }}">Settings</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+          {% endif %}
+        </div>
         <span class="site-title">
-          <a href="{{ url_for('home') }}">{{ config['SITE_NAME'] }}</a>
+          <a href="{{ url_for('home') }}">
+            <img src="/static/img/datahub.png" alt={{ config['SITE_NAME'] }}" /></a>
         </span>
-        {% if current_user.is_anonymous() %}
-          <a href="{{ url_for('login') }}">Login</a>
-          <a href="{{ url_for('register') }}">Register</a>
-        {% else %}
-          {{ current_user.full_name }}
-          <a href="{{ url_for('profile') }}">Settings</a>
-          <a href="{{ url_for('logout') }}">Logout</a>
-        {% endif %}
       </div>
     </header>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flashes site">
+        {% for category, message in messages %}
+          <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
     <div id="main" class="site" role="main">
       {% block content %}
         - No Content -

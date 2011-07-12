@@ -85,7 +85,7 @@ html, body {
 }
 
 body {
-  background-color: #fff;
+  background-color: #e4e9e6;
 }
 
 body, input {
@@ -106,28 +106,63 @@ h1 {
   font-size: 1.3em;
 }
 
+.flashes {
+  list-style-type: none;
+  margin: 0;
+}
+
+.flashes li {
+  padding: 0.5em;
+  text-align: center;
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+.flashes li.success {
+  background-color: #b2ec5d;
+}
+
 .site {
   margin: 0 auto;
-  width: 900px;
+  width: 800px;
   padding: 0 1em 0 1em;
 }
 
 header {
-  margin-top: 2em;
+  padding-top: 0.7em;
+  padding-bottom: 0.5em;
+
+  background-color: #444444;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#444444), to(#222222)); 
+  background-image: -webkit-linear-gradient(top, #444444, #222222); 
+  background-image:    -moz-linear-gradient(top, #444444, #222222); 
+  background-image:     -ms-linear-gradient(top, #444444, #222222); 
+  background-image:      -o-linear-gradient(top, #444444, #222222); 
+  background-image:         linear-gradient(top, #444444, #222222);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#444444', EndColorStr='#222222'); 
+}
+
+header .account-menu {
+  float: right;
+  padding-top: 0.65em;
+  color: #fff;
+}
+
+header .account-menu a {
+  color: #fff;
+  font-weight: bold;
+  padding-left: 1em;
 }
 
 header .site-title {
   display: block;
   text-align: bottom;
   padding-left: 0;
-  padding-top: 20px;
-  min-height: 50px;
   font-size: 1.7em;
   font-weight: bold;
 }
 
 header .site-title a {
-  color: #000;
   text-decoration: none;
 }
 
