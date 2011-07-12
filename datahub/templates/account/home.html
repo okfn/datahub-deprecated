@@ -1,4 +1,5 @@
 {% from "resource/parts.html" import create_form as resource_create_form %}
+{% from "resource/parts.html" import mainbar_list_item as resource_mainbar_list_item %}
 {% extends "layout.html" %}
 
 {% block title %}
@@ -16,7 +17,12 @@
   <div class="leftbar">
     <div class="box">
       <p>Is at {{ account.email }}</p>
-      <ul>
+
+      // FIXME: Node list from DB, not ES.
+      <ul class="resource-list">
+        {% for node in account.nodes %}
+          {{ resource_mainbar_list_item(node) }}
+        {% endfor %}
       </ul>
       {{ resource_create_form() }}
     </div>

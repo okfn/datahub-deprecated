@@ -10,7 +10,11 @@
       <h2>Update your settings</h2>
       <form method="POST">
         <dl>
-          <dt><label for="name">Login name</label></dt>
+          <dt><label for="name">Login name</label>
+            <p>
+              Changing your login will modify all your resource URLs. 
+            </p>
+          </dt>
           <dd><input name="name" value="{{ user.name }}" /></dd>
         </dl>
         <dl>
@@ -22,7 +26,13 @@
           <dd><input name="email" value="{{ user.email }}" /></dd>
         </dl>
         <dl>
-          <dt><label for="password">Password</label></dt>
+          <dt>
+            <label for="password">Password</label>
+            <p>
+              When both password fields are empty, your password will
+              remain unchanged.
+            </p>
+          </dt>
           <dd><input type="password" name="password" value="" /></dd>
         </dl>
         <dl>

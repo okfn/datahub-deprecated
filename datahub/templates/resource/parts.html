@@ -1,4 +1,16 @@
 
+{% macro mainbar_list_item(resource) %}
+  <li class="resource-item">
+    <span class="url"><a href="{{ resource.url }}"><img
+        src="/static/img/icons/link.png" alt="Download" /></a></span>
+    <span class="name"><a href="{{ url_for('account', account=resource.owner.name)
+        }}">{{ resource.owner.name }}</a> /
+    <a href="{{ url_for('node', owner=resource.owner.name, node=resource.name)
+        }}">{{ resource.name }}</a></span>
+    <p>{{ resource.summary }}</p>
+  </li>
+{% endmacro %}
+
 {% macro create_form() %}
   <form class="resource-create">
     <dl>
@@ -16,7 +28,5 @@
     <dl>
       <dd><input type="submit" value="Create Resource" /></dd>
     </dl>
-
-
   </form>
 {% endmacro %}

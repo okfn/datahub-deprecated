@@ -85,7 +85,7 @@ html, body {
 }
 
 body {
-  background-color: #e4e9e6;
+  background-color: #ebe9e3; /*#e4e9e6;*/
 }
 
 body, input {
@@ -181,6 +181,10 @@ header .site-title {
   font-weight: bold;
 }
 
+header .site-title img {
+  height: 29px;
+}
+
 header .site-title a {
   text-decoration: none;
 }
@@ -189,7 +193,14 @@ footer {
   border-top: 1px solid #ccc;
   margin: 25px 0 0 0;
   padding: 20px 0 20px 0;
-  background-color: #d1d1d1;
+  background-color: #dbd8d1;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#dbd8d1), to(#ebe9e3)); 
+  background-image: -webkit-linear-gradient(top, #dbd8d1, #ebe9e3); 
+  background-image:    -moz-linear-gradient(top, #dbd8d1, #ebe9e3); 
+  background-image:     -ms-linear-gradient(top, #dbd8d1, #ebe9e3); 
+  background-image:      -o-linear-gradient(top, #dbd8d1, #ebe9e3); 
+  background-image:         linear-gradient(top, #dbd8d1, #ebe9e3);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#dbd8d1', EndColorStr='#ebe9e3'); 
 }
 
 footer ul.links {
@@ -208,7 +219,7 @@ footer .site {
 }
 
 #main {
-  margin: 1em auto;
+  margin: 2em auto;
 }
 
 .box {
@@ -256,6 +267,11 @@ form dt {
 
 form label {
   font-weight: bold;
+}
+
+form p {
+  color: #888;
+  font-size: 0.9em;
 }
 
 form input {
@@ -324,6 +340,30 @@ form input[type=submit]:active {
   box-shadow: inset 0 0 8px 4px #548c29, 0 1px 0 0 #eeeeee; 
   }
 
+/* Listings */
+.resource-list {
+  list-style: none;
+  margin: 0;
+  padding-bottom: 1em;
+}
+
+.resource-item {
+  list-style: none;
+  padding-top: 1em;
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid #ddd;
+}
+
+.resource-item .name {
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+.resource-item .url {
+  float: right; 
+  margin-right: 5px;
+  margin-top: 5px;
+}
 
 /* Search */
 #search-box {
