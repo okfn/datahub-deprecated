@@ -4,7 +4,7 @@ from datahub.core import db
 from datahub.exc import NotFound
 from datahub.model import Account
 
-from datahub.logic.search import index_add, index_delete
+from datahub.logic.search import index_add
 from datahub.logic.validation import Name, AvailableAccountName
 
 class AccountSchemaState():
