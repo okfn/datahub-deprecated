@@ -27,7 +27,7 @@ class AccountCreatedEventRenderer(EventRenderer):
     html_template = '''<verb>signed up</verb>'''
 
     def params(self):
-        return self.elven.data
+        return self.event.data
 
 class AccountUpdatedEventRenderer(EventRenderer):
     html_template = '''<verb>updated</verb> their
