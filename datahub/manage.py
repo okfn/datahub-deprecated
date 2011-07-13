@@ -25,6 +25,16 @@ def resetsearch():
     except: pass
     conn.create_index(index_name())
 
+@manager.command
+def rebuildsearch():
+    """ Re-build the search index for common entities. """
+    resetsearch()
+    from datahub.logic.account import rebuild
+    rebuild()
+    from datahub.logic.node import rebuild
+    rebuild()
+
+
 
 if __name__ == '__main__':
     manager.run()

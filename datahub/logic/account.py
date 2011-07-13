@@ -48,3 +48,7 @@ def update(account_name, data):
     db.session.commit()
     return account
 
+def rebuild():
+    """ Rebuild the search index for all accounts. """
+    for account in Account.query:
+        index_add(account)
