@@ -39,7 +39,7 @@ class Resource(Node):
         self.name = name
         self.url = url
         self.summary = summary
-    
+
     def to_dict(self):
         d = super(Resource, self).to_dict()
         d['url'] = self.url
