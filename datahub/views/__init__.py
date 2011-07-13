@@ -8,11 +8,12 @@ from datahub.util import request_content
 
 from datahub.views.resource_api import api as resource_api
 from datahub.views.account_api import api as account_api
-from datahub.views.event_api import event_api
+from datahub.views.event_api import event_api, stream_api
 
 app.register_blueprint(resource_api, url_prefix='/api/v1/resource')
 app.register_blueprint(account_api, url_prefix='/api/v1/account')
 app.register_blueprint(event_api, url_prefix='/api/v1/event')
+app.register_blueprint(stream_api, url_prefix='/api/v1/stream')
 
 @app.route('/<owner>/<node>')
 def node(owner, node):
@@ -42,8 +43,9 @@ def dashboard():
 @app.route('/<account>')
 def account(account):
     account = logic.account.find(account)
+    events = logic.event.latest_by_entity(account)
     return render_template('account/home.html',
-                account=account)
+                account=account, events=events)
 
 @app.route('/register', methods=['GET'])
 def register():

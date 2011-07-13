@@ -1,3 +1,4 @@
+from jinja2 import Markup
 from flask import Response, request
 from flaskext.gravatar import Gravatar
 from werkzeug.exceptions import Unauthorized
@@ -11,6 +12,11 @@ from datahub import views
 gravatar = Gravatar(app, size=32, rating='g',
                     default='retro')
 
+
+@app.template_filter()
+def event_title(event):
+    from datahub.logic.event import renderer
+    return Markup(renderer(event))
 
 @app.context_processor
 def set_current_user():

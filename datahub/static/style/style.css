@@ -380,6 +380,42 @@ form input[type=submit]:active {
   margin-top: 5px;
 }
 
+/* Event listings */
+.events {
+  list-style-type: none;
+  margin: 0;
+}
+
+.events .event-item {
+  padding-top: 1em;
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid #ddd;
+  clear: left;
+}
+
+.events .event-item .icon {
+  float: left; 
+}
+
+.events .event-item .icon img {
+  margin-right: 5px;
+}
+
+.events .event-item .title {
+  font-weight: bold;
+}
+
+.events .event-item .title verb {
+  color: #63a62f;
+}
+
+.events .event-item p {
+  margin-top: 0.4em;
+  margin-left: 4em;
+  color: #666;
+  font-size: 0.9em;
+}
+
 /* Search */
 #search-box {
   width: 97%;

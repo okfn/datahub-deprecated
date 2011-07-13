@@ -1,0 +1,12 @@
+
+{% macro event_list_item(event) %}
+  <li class="event-item">
+    <span class="icon"><img src="{{ event.account.email | gravatar(size=32) }}" /></span>
+    <span class="title">
+      <a href="{{ url_for('account', account=event.account.name) }}">{{
+        event.account.name }}</a> 
+      {{ event | event_title }}
+    </span>
+    <p>{{ event.message | safe }}</p>
+  </li>
+{% endmacro %}
