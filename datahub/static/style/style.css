@@ -112,6 +112,8 @@ h1 img {
   margin-right: 5px;
   border: 1px solid #ddd;
   padding: 2px;
+  height: 32px;
+  width: 32px;
 }
 
 h2 {
@@ -398,6 +400,8 @@ form input[type=submit]:active {
 }
 
 .events .event-item .icon img {
+  width: 32px; 
+  height: 32px;
   margin-right: 5px;
 }
 

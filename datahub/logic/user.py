@@ -6,7 +6,10 @@ from formencode import Schema, Invalid, validators
 
 from datahub.core import db, login_manager
 from datahub.model import User
+from datahub.model.event import AccountCreatedEvent
+from datahub.model.event import AccountUpdatedEvent
 
+from datahub.logic import event
 from datahub.logic.search import index_add
 from datahub.logic.account import AccountSchema, AccountSchemaState
 from datahub.logic.account import get as get_account
@@ -76,6 +79,11 @@ def register(data):
     db.session.add(user)
     db.session.flush()
     index_add(user)
+
+    # FIXME: use current_user, not owner.
+    event_ = AccountCreatedEvent(user)
+    event.emit(event_)
+
     db.session.commit()
 
     return user
@@ -93,6 +101,11 @@ def update(user, data):
 
     db.session.add(user)
     index_add(user)
+
+    # FIXME: use current_user, not owner.
+    event_ = AccountUpdatedEvent(user)
+    event.emit(event_)
+
     db.session.commit()
 
     return user

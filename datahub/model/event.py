@@ -59,17 +59,40 @@ class EventStreamEntry(db.Model):
 ##### Event types library
 
 class AccountCreatedEvent(Event):
-    __mapper_args__ = {'polymorphic_identity': 'account_created'}    
+    __mapper_args__ = {'polymorphic_identity': 'account_created'}
 
     def __init__(self, account):
         super(AccountCreatedEvent, self).__init__(account, '')
 
+class AccountUpdatedEvent(Event):
+    __mapper_args__ = {'polymorphic_identity': 'account_updated'}
+
+    def __init__(self, account):
+        super(AccountUpdatedEvent, self).__init__(account, '')
+
 class ResourceCreatedEvent(Event):
-    __mapper_args__ = {'polymorphic_identity': 'resource_created'}    
+    __mapper_args__ = {'polymorphic_identity': 'resource_created'}
 
     def __init__(self, account, resource):
         super(ResourceCreatedEvent, self).__init__(account, 
             resource.summary)
         self.data = {'resource': resource.name, 
-                     'owner': account.name}
+                     'owner': resource.owner.name}
 
+class ResourceUpdatedEvent(Event):
+    __mapper_args__ = {'polymorphic_identity': 'resource_updated'}
+
+    def __init__(self, account, resource):
+        super(ResourceUpdatedEvent, self).__init__(account, 
+            resource.summary)
+        self.data = {'resource': resource.name, 
+                     'owner': resource.owner.name}
+
+class ResourceDeletedEvent(Event):
+    __mapper_args__ = {'polymorphic_identity': 'resource_deleted'}
+
+    def __init__(self, account, resource):
+        super(ResourceDeletedEvent, self).__init__(account, 
+            resource.summary)
+        self.data = {'resource': resource.name, 
+                     'owner': resource.owner.name}

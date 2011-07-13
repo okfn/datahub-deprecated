@@ -3,7 +3,10 @@ from formencode import Schema, All, validators
 from datahub.core import db
 from datahub.exc import NotFound
 from datahub.model import Account
+from datahub.model.event import AccountCreatedEvent
+from datahub.model.event import AccountUpdatedEvent
 
+from datahub.logic import event
 from datahub.logic.search import index_add
 from datahub.logic.validation import Name, AvailableAccountName
 
@@ -45,6 +48,11 @@ def update(account_name, data):
     if 'email' in data and data['email'] is not None:
         account.email = data['email']
     index_add(account)
+
+    # FIXME: use current_user, not owner.
+    event_ = AccountUpdatedEvent(account)
+    event.emit(event_)
+
     db.session.commit()
     return account
 
