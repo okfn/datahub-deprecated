@@ -1,5 +1,6 @@
 from flask import request, render_template, redirect
 from flask import url_for, flash
+from werkzeug.contrib.atom import AtomFeed
 from formencode import Invalid, htmlfill
 
 from datahub.core import app, login_manager, current_user
@@ -22,6 +23,19 @@ def node(owner, node):
     return render_template('resource/view.html',
                 resource=resource)
 
+@app.route('/<owner>/<node>.atom')
+def node_feed(owner, node):
+    resource = logic.resource.find(owner, node)
+    events = logic.event.latest_by_entity(resource)
+    entries = map(logic.event.event_to_entry, events)
+    feed = AtomFeed(title="%s / %s" % (owner, node),
+                    id='urn:datahub:%s/%s' % (owner, node),
+                    url=url_for('node', owner=owner,
+                        node=node),
+                    subtitle=resource.summary,
+                    entries=entries)
+    return feed.get_response()
+
 @app.route('/<owner>', methods=['POST'])
 def node_create(owner):
     """ Create a new node for the given user. """
@@ -40,12 +54,26 @@ def dashboard():
     return render_template('account/dashboard.html',
                 account=account)
 
+@app.route('/<account>.atom')
+def account_feed(account):
+    account = logic.account.find(account)
+    events = logic.event.latest_by_entity(account)
+    entries = map(logic.event.event_to_entry, events)
+    feed = AtomFeed(title=account.name,
+                    id='urn:datahub:%s' % account.name,
+                    url=url_for('account', account=account.name),
+                    subtitle=account.full_name,
+                    entries=entries)
+    return feed.get_response()
+
 @app.route('/<account>')
 def account(account):
     account = logic.account.find(account)
     events = logic.event.latest_by_entity(account)
     return render_template('account/home.html',
                 account=account, events=events)
+
+
 
 @app.route('/register', methods=['GET'])
 def register():

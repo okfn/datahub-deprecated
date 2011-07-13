@@ -17,6 +17,9 @@ class EventRenderer(object):
     def params(self):
         return self.event.data
 
+    def url(self):
+        return url_for('home', _external=True)
+
     def __html__(self):
         return self.html_template % self.params()
 
@@ -29,6 +32,10 @@ class AccountCreatedEventRenderer(EventRenderer):
     def params(self):
         return self.event.data
 
+    def url(self):
+        return url_for('account', self.event.account.name, 
+                _external=True)
+
 class AccountUpdatedEventRenderer(EventRenderer):
     html_template = '''<verb>updated</verb> their
         <a href='%(url)s'>profile</a>'''
@@ -37,6 +44,10 @@ class AccountUpdatedEventRenderer(EventRenderer):
         data = self.event.data.copy()
         data['url'] = url_for('account', account=self.event.account.name)
         return data
+
+    def url(self):
+        return url_for('account', self.event.account.name, 
+                _external=True)
 
 class ResourceCreatedEventRenderer(EventRenderer):
     html_template = '''<verb>created</verb> the resource
@@ -48,6 +59,10 @@ class ResourceCreatedEventRenderer(EventRenderer):
                               node=data['resource'])
         return data
 
+    def url(self):
+        return url_for('node', account=self.event.data['owner'], 
+                node=self.event.data['resource'], _external=True)
+
 class ResourceUpdatedEventRenderer(EventRenderer):
     html_template = '''<verb>updated</verb> the resource
         <a href='%(url)s'>%(owner)s/%(resource)s</a>'''
@@ -57,6 +72,10 @@ class ResourceUpdatedEventRenderer(EventRenderer):
         data['url'] = url_for('node', owner=data['owner'], 
                               node=data['resource'])
         return data
+
+    def url(self):
+        return url_for('node', account=self.event.data['owner'], 
+                node=self.event.data['resource'], _external=True)
 
 class ResourceDeletedEventRenderer(EventRenderer):
     html_template = '''<verb>deleted</verb> the resource

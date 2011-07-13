@@ -1,5 +1,14 @@
 {% extends "layout.html" %}
 
+{% block head %}
+  <link rel="alternate" type="application/atom+xml" 
+  href="{{ url_for('node_feed', owner=resource.owner.name,
+                   node=resource.name) }}">
+  <link rel="alternate" type="application/json" 
+    href="{{ url_for('resource_api.get', owner=resource.owner.name, 
+                     resource=resource.name) }}">
+{% endblock %}
+
 {% block title %}
   {{ resource.owner.name }} / {{ resource.name }}
 {% endblock %}

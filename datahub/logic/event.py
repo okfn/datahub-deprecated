@@ -1,3 +1,5 @@
+from werkzeug.contrib.atom import FeedEntry
+
 from datahub.core import db
 from datahub.exc import NotFound, InternalError
 from datahub.model import Event, EventStreamEntry
@@ -53,4 +55,19 @@ def renderer(event):
         return RENDERERS[type(event)](event)
     except KeyError:
         raise InternalError('No renderer for %s' % type(event))
+
+def event_to_entry(event):
+    """ Convert an event to an atom feed entry. """
+    r = renderer(event)
+    entry = FeedEntry(title=event.account.name + ' ' + r.__html__(),
+                      title_type='html',
+                      summary=event.message,
+                      summary_type='html',
+                      url=None,
+                      author=event.account.full_name,
+                      id='urn:datahub:entry:%s' % event.id,
+                      updated=event.time,
+                      published=event.time)
+    return entry
+
 
