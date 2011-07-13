@@ -53,6 +53,13 @@ class ResourceTestCase(unittest.TestCase):
         body = json.loads(res.data)
         assert isinstance(body, dict)
         assert body['name']=='world', body
+    
+    def test_user_resource_create_in_wui(self):
+        data = {'name': 'world', 'url': 'http://foos.com', 
+                'summary': 'A foo'}
+        res = self.app.post('/fixtures', data=data, 
+                follow_redirects=True)
+        assert 'A foo' in res.data, res.data
 
     def test_resource_get(self):
         res = self.app.get('/api/v1/resource/fixtures/my-file')

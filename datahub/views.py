@@ -4,7 +4,7 @@ from formencode import Invalid, htmlfill
 
 from datahub.core import app, login_manager, current_user
 from datahub import logic
-from datahub.exc import Gone, BadRequest
+from datahub.exc import Gone
 from datahub.util import request_content, jsonify
 
 @app.route('/api/v1/resource/<owner>', methods=['GET'])
