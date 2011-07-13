@@ -52,13 +52,21 @@ class EventStreamEntry(db.Model):
     def to_dict(self):
         return {'entity_type': self.entity_type,
                 'entity_id': self.entity_id,
+                'type': self.discriminator,
                 'event': self.event.to_dict()}
 
 ##### Event types library
 
 class AccountCreatedEvent(Event):
+    __mapper_args__ = {'polymorphic_identity': 'account_created'}    
 
     def __init__(self, user):
         super(AccountCreatedEvent, self).__init__(user, '')
 
+class ResourceCreatedEvent(Event):
+    __mapper_args__ = {'polymorphic_identity': 'resource_created'}    
+
+    def __init__(self, user, resource):
+        super(ResourceCreatedEvent, self).__init__(user, resource.summary)
+        self.data = {'resource': resource.name}
 
