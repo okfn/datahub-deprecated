@@ -3,8 +3,10 @@ from formencode import Schema, All, validators
 from datahub.core import db
 from datahub.exc import NotFound
 from datahub.model import Resource, Account
+from datahub.model.event import ResourceCreatedEvent
 
 from datahub.logic import account
+from datahub.logic import event
 from datahub.logic.search import index_add, index_delete
 from datahub.logic.validation import Name, URL, AvailableResourceName
 
@@ -55,11 +57,15 @@ def create(owner_name, data):
     db.session.add(resource)
     db.session.flush()
     index_add(resource)
+
+    # FIXME: use current_user, not owner.
+    event_ = ResourceCreatedEvent(owner, resource)
+    event.emit(event_, [resource])
+
     db.session.commit()
     return resource
 
 def update(owner_name, resource_name, data):
-
     resource = find(owner_name, resource_name)
 
     # tell availablename about our current name:
