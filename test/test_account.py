@@ -25,27 +25,27 @@ class ProfileTestCase(unittest.TestCase):
         core.db.session.commit()
 
     def test_account_profile_get(self):
-        res = self.app.get('/api/v1/profile/no-such-user')
+        res = self.app.get('/api/v1/account/no-such-user')
         assert res.status.startswith("404"), res.status
-        res = self.app.get('/api/v1/profile/fixturix', 
+        res = self.app.get('/api/v1/account/fixturix', 
                 headers={'Accept': JSON})
         assert res.status.startswith("200"), res.status
         body = json.loads(res.data)
         assert body['name']=='fixturix', body
 
     def test_account_profile_put(self):
-        res = self.app.get('/api/v1/profile/fixturix', 
+        res = self.app.get('/api/v1/account/fixturix', 
                 headers={'Accept': JSON})
         body = json.loads(res.data)
         body['name']='fixturix-renamed'
-        res = self.app.put('/api/v1/profile/fixturix', 
+        res = self.app.put('/api/v1/account/fixturix', 
                 data=body, headers={'Accept': JSON})
         body = json.loads(res.data)
         assert body['name']=='fixturix-renamed', body
 
     def test_account_profile_put_invalid_name(self):
         body = {'name': 'fixturix renamed invalid'}
-        res = self.app.put('/api/v1/profile/fixturix', 
+        res = self.app.put('/api/v1/account/fixturix', 
                 data=body, headers={'Accept': JSON})
         assert res.status.startswith("400"), res
         body = json.loads(res.data)
@@ -53,7 +53,7 @@ class ProfileTestCase(unittest.TestCase):
 
     def test_account_profile_put_invalid_email(self):
         body = {'name': 'fixturix', 'email': 'bar', 'full_name': 'la la'}
-        res = self.app.put('/api/v1/profile/fixturix', 
+        res = self.app.put('/api/v1/account/fixturix', 
                 data=body, headers={'Accept': JSON})
         assert res.status.startswith("400"), res
         body = json.loads(res.data)
@@ -83,7 +83,7 @@ class UserWebInterfaceTestCase(unittest.TestCase):
                         'password_confirm': 'password'}
         res = self.app.post('/register', data=form_content)
         assert res.status.startswith("302"), res
-        res = self.app.get('/api/v1/profile/test_user', 
+        res = self.app.get('/api/v1/account/test_user', 
                 headers={'Accept': JSON})
         assert res.status.startswith("200"), res.status
         body = json.loads(res.data)
