@@ -21,6 +21,7 @@ class Account(db.Model):
                 'created_at': self.created_at,
                 'updated_at': self.updated_at,
                 'name': self.name,
+                'type': self.discriminator,
                 'full_name': self.full_name}
 
 class User(Account):
@@ -73,6 +74,7 @@ class Node(db.Model):
                 'name': self.name,
                 'created_at': self.created_at,
                 'updated_at': self.updated_at,
+                'type': self.discriminator,
                 'owner': self.owner.name}
 
 class Resource(Node):
@@ -84,6 +86,11 @@ class Resource(Node):
         self.name = name
         self.url = url
         self.summary = summary
+    
+    def to_dict(self):
+        d = super(Resource, self).to_dict()
+        d['url'] = self.url
+        return d
 
     def __repr__(self):
         return '<Resource %r>' % self.name
