@@ -1,8 +1,8 @@
 from flaskext.script import Manager
 from flaskext.celery import install_commands as install_celery_commands
 
-from datahub.core import app
-from datahub.model import db
+from datahub.core import app, db
+from datahub.model import * 
 
 manager = Manager(app)
 install_celery_commands(manager)
