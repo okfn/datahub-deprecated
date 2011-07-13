@@ -37,11 +37,17 @@ class ProfileTestCase(unittest.TestCase):
         res = self.app.get('/api/v1/account/fixturix', 
                 headers={'Accept': JSON})
         body = json.loads(res.data)
+
         body['name']='fixturix-renamed'
         res = self.app.put('/api/v1/account/fixturix', 
                 data=body, headers={'Accept': JSON})
         body = json.loads(res.data)
         assert body['name']=='fixturix-renamed', body
+
+        res = self.app.get('/api/v1/stream/account/1', 
+                headers={'Accept': JSON})
+        body = json.loads(res.data)
+        assert body[0]['type']=='account_updated', body
 
     def test_account_profile_put_invalid_name(self):
         body = {'name': 'fixturix renamed invalid'}
@@ -50,6 +56,11 @@ class ProfileTestCase(unittest.TestCase):
         assert res.status.startswith("400"), res
         body = json.loads(res.data)
         assert 'name' in body['errors'], body
+
+        res = self.app.get('/api/v1/stream/account/1', 
+                headers={'Accept': JSON})
+        body = json.loads(res.data)
+        assert not len(body), body
 
     def test_account_profile_put_invalid_email(self):
         body = {'name': 'fixturix', 'email': 'bar', 'full_name': 'la la'}
@@ -88,6 +99,11 @@ class UserWebInterfaceTestCase(unittest.TestCase):
         assert res.status.startswith("200"), res.status
         body = json.loads(res.data)
         assert body['full_name']=='Test User', body
+
+        res = self.app.get('/test_user')
+        assert res.status.startswith("200"), res.status
+        assert 'signed up' in res.data, res.data
+
 
     def test_register_user_invalid_name(self):
         form_content = {'name': 'test user', 
