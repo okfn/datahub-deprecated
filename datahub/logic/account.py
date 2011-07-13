@@ -4,6 +4,7 @@ from datahub.core import db
 from datahub.exc import NotFound
 from datahub.model import Account
 
+from datahub.logic.search import index_add, index_delete
 from datahub.logic.validation import Name, AvailableAccountName
 
 class AccountSchemaState():
@@ -43,6 +44,7 @@ def update(account_name, data):
     account.full_name = data['full_name']
     if 'email' in data and data['email'] is not None:
         account.email = data['email']
+    index_add(account)
     db.session.commit()
     return account
 

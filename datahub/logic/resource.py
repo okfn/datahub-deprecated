@@ -5,6 +5,7 @@ from datahub.exc import NotFound
 from datahub.model import Resource, Account
 
 from datahub.logic import account
+from datahub.logic.search import index_add, index_delete
 from datahub.logic.validation import Name, URL, AvailableResourceName
 
 class ResourceSchemaState():
@@ -52,8 +53,9 @@ def create(owner_name, data):
     resource = Resource(owner, data['name'], data['url'],
                         data['summary'])
     db.session.add(resource)
+    db.session.flush()
+    index_add(resource)
     db.session.commit()
-
     return resource
 
 def update(owner_name, resource_name, data):
@@ -67,6 +69,7 @@ def update(owner_name, resource_name, data):
     resource.name = data['name']
     resource.url = data['url']
     resource.summary = data['summary']
+    index_add(resource)
     db.session.commit()
 
     return resource
@@ -75,6 +78,7 @@ def delete(owner_name, resource_name):
     resource = find(owner_name, resource_name)
 
     db.session.delete(resource)
+    index_delete(resource)
     db.session.commit()
 
 

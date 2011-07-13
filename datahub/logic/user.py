@@ -6,6 +6,8 @@ from formencode import Schema, Invalid, validators
 
 from datahub.core import db, login_manager
 from datahub.model import User
+
+from datahub.logic.search import index_add
 from datahub.logic.account import AccountSchema, AccountSchemaState
 from datahub.logic.account import get as get_account
 
@@ -72,6 +74,8 @@ def register(data):
     user = User(data['name'], data['full_name'], data['email'],
                 hash_password(data['password']))
     db.session.add(user)
+    db.session.flush()
+    index_add(user)
     db.session.commit()
 
     return user
@@ -88,6 +92,7 @@ def update(user, data):
         user.password = hash_password(data['password'])
 
     db.session.add(user)
+    index_add(user)
     db.session.commit()
 
     return user
