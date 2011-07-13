@@ -13,14 +13,14 @@ class Event(db.Model):
     message = db.Column(db.UnicodeText)
     time = db.Column(db.DateTime, default=datetime.utcnow)
 
-    user_id = db.Column(db.Integer, db.ForeignKey('account.id'))
-    user = db.relationship(Account,
+    account_id = db.Column(db.Integer, db.ForeignKey('account.id'))
+    account = db.relationship(Account,
                            backref=db.backref('events', lazy='dynamic'))
 
     data = db.Column(JSONType, default=dict)
 
-    def __init__(self, user, message):
-        self.user = user
+    def __init__(self, account, message):
+        self.account = account
         self.message = message
 
     def to_dict(self):
@@ -29,7 +29,7 @@ class Event(db.Model):
                 'time': self.time,
                 'data': self.data,
                 'type': self.discriminator,
-                'user': self.user.name}
+                'account': self.account.name}
 
 
 class EventStreamEntry(db.Model):
@@ -55,18 +55,21 @@ class EventStreamEntry(db.Model):
                 'type': self.discriminator,
                 'event': self.event.to_dict()}
 
+
 ##### Event types library
 
 class AccountCreatedEvent(Event):
     __mapper_args__ = {'polymorphic_identity': 'account_created'}    
 
-    def __init__(self, user):
-        super(AccountCreatedEvent, self).__init__(user, '')
+    def __init__(self, account):
+        super(AccountCreatedEvent, self).__init__(account, '')
 
 class ResourceCreatedEvent(Event):
     __mapper_args__ = {'polymorphic_identity': 'resource_created'}    
 
-    def __init__(self, user, resource):
-        super(ResourceCreatedEvent, self).__init__(user, resource.summary)
-        self.data = {'resource': resource.name}
+    def __init__(self, account, resource):
+        super(ResourceCreatedEvent, self).__init__(account, 
+            resource.summary)
+        self.data = {'resource': resource.name, 
+                     'owner': account.name}
 
