@@ -10,6 +10,7 @@ JSON = 'application/json'
 DATASET_FIXTURE = {'name': 'world', 
                     'summary': 'A list of everything!'}
 
+from test_resource import RESOURCE_FIXTURE
 from util import make_test_app, tear_down_test_app
 
 class DatasetTestCase(unittest.TestCase):
@@ -78,7 +79,7 @@ class DatasetTestCase(unittest.TestCase):
         res = self.app.put('/api/v1/dataset/fixtures/no-world',
                            data=data)
         assert res.status.startswith("404"), res.data
-        
+
         res = self.app.put('/api/v1/dataset/fixtures/world',
                            data=data)
         res = self.app.get('/api/v1/dataset/fixtures/mars')
@@ -88,7 +89,7 @@ class DatasetTestCase(unittest.TestCase):
     def test_dataset_delete(self):
         res = self.app.delete('/api/v1/dataset/fixtures/no-world')
         assert res.status.startswith("404"), res.data
-        
+
         res = self.app.delete('/api/v1/dataset/fixtures/world')
         assert res.status.startswith("410"), res.data
 
@@ -120,6 +121,75 @@ class DatasetTestCase(unittest.TestCase):
         assert res.status.startswith("400"), res
         data = json.loads(res.data)
         assert 'name' in data['errors'], data
+
+    def test_add_resource_to_dataset(self):
+        res = self.app.post('/api/v1/resource/fixtures',
+                            data=RESOURCE_FIXTURE, 
+                            headers={'Accept': JSON})
+
+        data = {'owner': 'fixtures',
+                'name': RESOURCE_FIXTURE['name']}
+        res = self.app.post('/api/v1/dataset/fixtures/world/resources',
+                            data=data,
+                            headers={'Accept': JSON})
+        assert res.status.startswith("302"), res
+
+        res = self.app.post('/api/v1/dataset/fixtures/no-ds/resources',
+                            data=data,
+                            headers={'Accept': JSON})
+        assert res.status.startswith("404"), res
+
+        res = self.app.get('/api/v1/dataset/fixtures/world/resources',
+                            data=data,
+                            headers={'Accept': JSON})
+        assert res.status.startswith("200"), res
+        body = json.loads(res.data)
+        assert len(body)==1, body
+        assert body[0]['name']==data['name'], body
+        assert body[0]['owner']==data['owner'], body
+
+    def test_add_non_existing_resource_to_dataset(self):
+        res = self.app.post('/api/v1/resource/fixtures',
+                            data=RESOURCE_FIXTURE, 
+                            headers={'Accept': JSON})
+
+        data = {'owner': 'fixtures'}
+        res = self.app.post('/api/v1/dataset/fixtures/world/resources',
+                            data=data,
+                            headers={'Accept': JSON})
+        assert res.status.startswith("400"), res
+
+        data = {'owner': 'fixtures',
+                'name': 'does-not-exist'}
+        res = self.app.post('/api/v1/dataset/fixtures/world/resources',
+                            data=data,
+                            headers={'Accept': JSON})
+        assert res.status.startswith("404"), res
+
+    def test_remove_resource_from_dataset(self):
+        res = self.app.post('/api/v1/resource/fixtures',
+                            data=RESOURCE_FIXTURE, 
+                            headers={'Accept': JSON})
+
+        data = {'owner': 'fixtures',
+                'name': RESOURCE_FIXTURE['name']}
+        res = self.app.post('/api/v1/dataset/fixtures/world/resources',
+                            data=data,
+                            headers={'Accept': JSON})
+        res = self.app.get('/api/v1/dataset/fixtures/world/resources',
+                            data=data,
+                            headers={'Accept': JSON})
+        body = json.loads(res.data)
+        assert len(body)==1, body
+        u = '/api/v1/dataset/fixtures/world/resources/fixtures/%s'
+        res = self.app.delete(u % RESOURCE_FIXTURE['name'],
+                            data=data,
+                            headers={'Accept': JSON})
+        res = self.app.get('/api/v1/dataset/fixtures/world/resources',
+                            data=data,
+                            headers={'Accept': JSON})
+        body = json.loads(res.data)
+        assert len(body)==0, body
 
     #def test_wui_dataset_get(self):
     #    res = self.app.get('/fixtures/world')

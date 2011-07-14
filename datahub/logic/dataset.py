@@ -5,7 +5,7 @@ from datahub.model.event import DatasetCreatedEvent
 from datahub.model.event import DatasetUpdatedEvent
 from datahub.model.event import DatasetDeletedEvent
 
-from datahub.logic import account
+from datahub.logic import account, resource
 from datahub.logic import event
 from datahub.logic.search import index_add, index_delete
 from datahub.logic.node import NodeSchema, NodeSchemaState
@@ -68,8 +68,26 @@ def update(owner_name, dataset_name, data):
     event.emit(event_, [dataset])
 
     db.session.commit()
-
     return dataset
+
+def list_resources(owner_name, dataset_name):
+    dataset = find(owner_name, dataset_name)
+    return dataset.resources
+
+def add_resource(owner_name, dataset_name, resource_data):
+    dataset = find(owner_name, dataset_name)
+    res = resource.find(resource_data['owner'], resource_data['name'])
+    if not res in dataset.resources:
+        dataset.resources.append(res)
+    db.session.commit()
+
+def remove_resource(owner_name, dataset_name, resource_owner,
+                    resource_name):
+    dataset = find(owner_name, dataset_name)
+    res = resource.find(resource_owner, resource_name)
+    if res in dataset.resources:
+        dataset.resources.remove(res)
+    db.session.commit()
 
 def delete(owner_name, dataset_name):
     dataset = find(owner_name, dataset_name)

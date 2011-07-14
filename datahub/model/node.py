@@ -3,6 +3,12 @@ from datahub.core import db
 
 from datahub.model.account import Account
 
+datasets_resources_table = db.Table('datasets_resources', db.metadata,
+    db.Column('dataset_id', db.Integer, db.ForeignKey("node.id"), primary_key=True),
+    db.Column('resource_id', db.Integer, db.ForeignKey("node.id"), primary_key=True),
+    db.Column('created_at', db.DateTime, default=datetime.utcnow),
+)
+
 class Node(db.Model):
     __tablename__ = 'node'
     discriminator = db.Column('type', db.Unicode(50))
@@ -64,4 +70,11 @@ class Dataset(Node):
 
     def __repr__(self):
         return '<Dataset %r>' % self.name
+
+
+Dataset.resources = db.relationship(Resource,
+                    secondary=datasets_resources_table,
+                    primaryjoin=Dataset.id==datasets_resources_table.c.dataset_id,
+                    secondaryjoin=Resource.id==datasets_resources_table.c.resource_id,
+                    backref=db.backref('datasets', lazy='dynamic'))
 
