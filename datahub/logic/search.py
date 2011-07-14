@@ -15,19 +15,19 @@ def index_add(entity):
         raise TypeError('Can only index entities with a __tablename__')
     if not hasattr(entity, 'to_dict'):
         raise TypeError('Can only index entities with a to_dict')
-    conn = connection()
-    conn.index(entity.to_dict(), index_name(), 
-               entity.__tablename__, entity.id)
+    #conn = connection()
+    #conn.index(entity.to_dict(), index_name(), 
+    #           entity.__tablename__, entity.id)
 
 def index_delete(entity):
     """ Deleta an SQLAlchemy-controlled entity from the elastic search 
     index, catching any NotFoundExceptions. """
     if not hasattr(entity, '__tablename__'):
         raise TypeError('Can only index entities with a __tablename__')
-    conn = connection()
-    try:
-        conn.delete(index_name(), entity.__tablename__, entity.id)
-    except NotFoundException:
-        pass
+    #conn = connection()
+    #try:
+    #    conn.delete(index_name(), entity.__tablename__, entity.id)
+    #except NotFoundException:
+    #    pass
 
 
