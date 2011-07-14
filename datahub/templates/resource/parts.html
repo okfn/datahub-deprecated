@@ -12,7 +12,7 @@
 {% endmacro %}
 
 {% macro create_form(user) %}
-  <form action="{{ url_for('node_create', owner=user.name) }}" 
+  <form action="{{ url_for('resource_create') }}" 
     method="POST" class="resource-create">
     <h3>Create a resource</h3>
     <p>

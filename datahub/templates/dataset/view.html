@@ -1,0 +1,33 @@
+{% from "resource/parts.html" import create_form as resource_create_form %}
+{% extends "layout.html" %}
+
+{% block head %}
+  <link rel="alternate" type="application/atom+xml" 
+  href="{{ url_for('node_feed', owner=dataset.owner.name,
+                   node=dataset.name) }}">
+  <link rel="alternate" type="application/json" 
+    href="{{ url_for('dataset_api.get', owner=dataset.owner.name, 
+                     dataset=dataset.name) }}">
+{% endblock %}
+
+{% block title %}
+  {{ dataset.owner.name }} / {{ dataset.name }}
+{% endblock %}
+
+{% block content %}
+  <h1><img src="{{ dataset.owner.email | gravatar(size=32) }}" /> 
+    <a href="{{ url_for('account', account=dataset.owner.name) }}">{{ dataset.owner.name }}</a>
+    / <strong>{{ dataset.name }}</strong></h1>
+  <div class="sidebar">
+    <div class="nobox">
+      {{ resource_create_form(current_user) }}
+    </div>
+  </div>
+  <div class="mainbar">
+    <div class="box">
+      {{ dataset.summary }}
+    </div>
+  </div>
+{% endblock %}
+
+

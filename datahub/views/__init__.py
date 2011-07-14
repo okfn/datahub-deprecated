@@ -4,6 +4,7 @@ from werkzeug.contrib.atom import AtomFeed
 from formencode import Invalid, htmlfill
 
 from datahub.core import app, login_manager, current_user
+from datahub.model import Resource, Dataset
 from datahub import logic
 from datahub.util import request_content
 
@@ -20,10 +21,13 @@ app.register_blueprint(stream_api, url_prefix='/api/v1/stream')
 
 @app.route('/<owner>/<node>')
 def node(owner, node):
-    # FIXME: query for node, not resource
-    resource = logic.resource.find(owner, node)
-    return render_template('resource/view.html',
-                resource=resource)
+    node = logic.node.find(owner, node)
+    if isinstance(node, Dataset):
+        return render_template('dataset/view.html',
+                    dataset=node)
+    elif isinstance(node, Resource):
+        return render_template('resource/view.html',
+                    resource=node)
 
 @app.route('/<owner>/<node>.atom')
 def node_feed(owner, node):
@@ -38,15 +42,31 @@ def node_feed(owner, node):
                     entries=entries)
     return feed.get_response()
 
-@app.route('/<owner>', methods=['POST'])
-def node_create(owner):
-    """ Create a new node for the given user. """
+@app.route('/resource', methods=['POST'])
+def resource_create():
+    """ Create a new resource for the given user. """
     # FIXME: handle different kinds of nodes.
+    owner = current_user.name
     data = request_content(request)
     try:
         resource = logic.resource.create(owner, data)
         return redirect(url_for('node', owner=owner, 
                                 node=resource.name))
+    except Invalid, inv:
+        page = dashboard()
+        return htmlfill.render(page, defaults=data, 
+                errors=inv.unpack_errors())
+
+@app.route('/dataset', methods=['POST'])
+def dataset_create():
+    """ Create a new dataset for the given user. """
+    # FIXME: handle different kinds of nodes.
+    owner = current_user.name
+    data = request_content(request)
+    try:
+        dataset = logic.dataset.create(owner, data)
+        return redirect(url_for('node', owner=owner, 
+                                node=dataset.name))
     except Invalid, inv:
         page = dashboard()
         return htmlfill.render(page, defaults=data, 
