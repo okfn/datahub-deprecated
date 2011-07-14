@@ -2,4 +2,5 @@ configlocal.js
 sandbox
 *.pyc
 *.egg.info
+htmlconv/
 datahub.db
