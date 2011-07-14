@@ -4,6 +4,11 @@ from flask import url_for
 from datahub.model.event import ResourceCreatedEvent
 from datahub.model.event import ResourceUpdatedEvent
 from datahub.model.event import ResourceDeletedEvent
+
+from datahub.model.event import DatasetCreatedEvent
+from datahub.model.event import DatasetUpdatedEvent
+from datahub.model.event import DatasetDeletedEvent
+
 from datahub.model.event import AccountCreatedEvent
 from datahub.model.event import AccountUpdatedEvent
 
@@ -84,10 +89,50 @@ class ResourceDeletedEventRenderer(EventRenderer):
     def params(self):
         return self.event.data
 
+class DatasetCreatedEventRenderer(EventRenderer):
+    html_template = '''<verb>created</verb> the dataset
+        <a href='%(url)s'>%(owner)s/%(dataset)s</a>'''
+
+    def params(self):
+        data = self.event.data.copy()
+        data['url'] = url_for('node', owner=data['owner'], 
+                              node=data['dataset'])
+        return data
+
+    def url(self):
+        return url_for('node', account=self.event.data['owner'], 
+                node=self.event.data['dataset'], _external=True)
+
+class DatasetUpdatedEventRenderer(EventRenderer):
+    html_template = '''<verb>updated</verb> the dataset
+        <a href='%(url)s'>%(owner)s/%(dataset)s</a>'''
+
+    def params(self):
+        data = self.event.data.copy()
+        data['url'] = url_for('node', owner=data['owner'], 
+                              node=data['dataset'])
+        return data
+
+    def url(self):
+        return url_for('node', account=self.event.data['owner'], 
+                node=self.event.data['dataset'], _external=True)
+
+class DatasetDeletedEventRenderer(EventRenderer):
+    html_template = '''<verb>deleted</verb> the dataset
+        %(owner)s/%(dataset)s'''
+
+    def params(self):
+        return self.event.data
+
 RENDERERS = {
     ResourceCreatedEvent: ResourceCreatedEventRenderer,
     ResourceUpdatedEvent: ResourceUpdatedEventRenderer,
     ResourceDeletedEvent: ResourceDeletedEventRenderer,
+
+    DatasetCreatedEvent: DatasetCreatedEventRenderer,
+    DatasetUpdatedEvent: DatasetUpdatedEventRenderer,
+    DatasetDeletedEvent: DatasetDeletedEventRenderer,
+
     AccountCreatedEvent: AccountCreatedEventRenderer,
     AccountUpdatedEvent: AccountUpdatedEventRenderer
     }

@@ -7,12 +7,12 @@ from datahub import web
 
 JSON = 'application/json'
 
-RESOURCE_FIXTURE = {'name': 'world', 
+DATASET_FIXTURE = {'name': 'world', 
                     'summary': 'A list of everything!'}
 
 from util import make_test_app, tear_down_test_app
 
-class ResourceTestCase(unittest.TestCase):
+class DatasetTestCase(unittest.TestCase):
 
     def setUp(self):
         self.app = make_test_app()
@@ -28,7 +28,7 @@ class ResourceTestCase(unittest.TestCase):
         core.db.session.add(user)
         core.db.session.commit()
 
-        self.app.post('/api/v1/dataset/fixtures', data=RESOURCE_FIXTURE)
+        self.app.post('/api/v1/dataset/fixtures', data=DATASET_FIXTURE)
 
     def test_user_dataset_index(self):
         res = self.app.get('/api/v1/dataset/fixtures')
@@ -71,6 +71,62 @@ class ResourceTestCase(unittest.TestCase):
         assert res.status.startswith("404"), res.status
         body = json.loads(res.data)
         assert 'status' in body, body
+
+    def test_dataset_update(self):
+        data = DATASET_FIXTURE.copy() 
+        data['name'] = 'mars'
+        res = self.app.put('/api/v1/dataset/fixtures/no-world',
+                           data=data)
+        assert res.status.startswith("404"), res.data
+        
+        res = self.app.put('/api/v1/dataset/fixtures/world',
+                           data=data)
+        res = self.app.get('/api/v1/dataset/fixtures/mars')
+        body = json.loads(res.data)
+        assert body['name']=='mars', body
+
+    def test_dataset_delete(self):
+        res = self.app.delete('/api/v1/dataset/fixtures/no-world')
+        assert res.status.startswith("404"), res.data
+        
+        res = self.app.delete('/api/v1/dataset/fixtures/world')
+        assert res.status.startswith("410"), res.data
+
+        res = self.app.get('/api/v1/dataset/fixtures/world')
+        assert res.status.startswith("404"), res.data
+
+    def test_create_invalid_data(self):
+        data = DATASET_FIXTURE.copy() 
+        data['name'] = 'invalid name'
+        res = self.app.post('/api/v1/dataset/fixtures', data=data, 
+                            headers={'Accept': JSON})
+        assert res.status.startswith("400"), res
+        data = json.loads(res.data)
+        assert 'name' in data['errors'], data
+
+    def test_create_missing_data(self):
+        data = DATASET_FIXTURE.copy() 
+        data['name'] = ''
+        res = self.app.post('/api/v1/dataset/fixtures', data=data, 
+                            headers={'Accept': JSON})
+        assert res.status.startswith("400"), res
+        data = json.loads(res.data)
+        assert 'name' in data['errors'], data
+
+    def test_create_existing_name(self):
+        res = self.app.post('/api/v1/dataset/fixtures', 
+                            data=DATASET_FIXTURE, 
+                            headers={'Accept': JSON})
+        assert res.status.startswith("400"), res
+        data = json.loads(res.data)
+        assert 'name' in data['errors'], data
+
+    #def test_wui_dataset_get(self):
+    #    res = self.app.get('/fixtures/world')
+    #    assert res.status.startswith("200"), res.status
+    #    assert 'A very neat dataset' in res.data, res.data
+
+
 
 if __name__ == '__main__':
     unittest.main()

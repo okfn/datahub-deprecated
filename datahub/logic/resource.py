@@ -66,18 +66,18 @@ def update(owner_name, resource_name, data):
     resource.url = data['url']
     resource.summary = data['summary']
     index_add(resource)
-    
+
     # FIXME: use current_user, not owner.
     event_ = ResourceUpdatedEvent(resource.owner, resource)
     event.emit(event_, [resource])
-    
+
     db.session.commit()
 
     return resource
 
 def delete(owner_name, resource_name):
     resource = find(owner_name, resource_name)
-    
+
     # FIXME: use current_user, not owner.
     event_ = ResourceDeletedEvent(resource.owner, resource)
     event.emit(event_, [resource])
