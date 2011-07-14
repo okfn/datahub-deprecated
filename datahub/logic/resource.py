@@ -1,5 +1,3 @@
-from formencode import Schema, All, validators
-
 from datahub.core import db
 from datahub.exc import NotFound
 from datahub.model import Resource, Account
@@ -10,22 +8,13 @@ from datahub.model.event import ResourceDeletedEvent
 from datahub.logic import account
 from datahub.logic import event
 from datahub.logic.search import index_add, index_delete
-from datahub.logic.validation import Name, URL, AvailableResourceName
+from datahub.logic.validation import URL
+from datahub.logic.node import NodeSchema, NodeSchemaState
+from datahub.logic.node import get as get_node, find as find_node
 
-class ResourceSchemaState():
-    """ Used to let the AvailableResourceName validator know that the 
-    current name is taken by the resource itself. """
-
-    def __init__(self, owner_name, current_name):
-        self.owner_name = owner_name
-        self.current_name = current_name
-
-class ResourceSchema(Schema):
+class ResourceSchema(NodeSchema):
     allow_extra_fields = True
-    name = All(Name(not_empty=True), AvailableResourceName())
     url = URL(not_empty=True)
-    summary = validators.String(min=0, max=3000, if_missing='',
-                                if_empty='')
 
 def list_by_owner(owner_name):
     """ Query for all resources owned by a particular account. """
@@ -36,22 +25,21 @@ def list_by_owner(owner_name):
 def get(owner_name, resource_name):
     """ Get will try to find a resource and return None if no resource is
     found. Use `find` for an exception-generating variant. """
-    return Resource.query.join(Resource.owner).\
-            filter(Account.name==owner_name).\
-            filter(Resource.name==resource_name).first()
+    resource = get_node(owner_name, resource_name)
+    return resource if isinstance(resource, Resource) else None
 
 def find(owner_name, resource_name):
     """ Find a resource or yield a `NotFound` exception. """
-    resource = get(owner_name, resource_name)
-    if resource is None:
-        raise NotFound('No such resource: %s / %s' % (owner_name, 
+    resource = find_node(owner_name, resource_name)
+    if not isinstance(resource, Resource):
+        raise NotFound('Not a resource: %s / %s' % (owner_name, 
                        resource_name))
     return resource
 
 def create(owner_name, data):
     owner = account.find(owner_name)
 
-    state = ResourceSchemaState(owner_name, None)
+    state = NodeSchemaState(owner_name, None)
     data = ResourceSchema().to_python(data, state=state)
 
     resource = Resource(owner, data['name'], data['url'],
@@ -71,7 +59,7 @@ def update(owner_name, resource_name, data):
     resource = find(owner_name, resource_name)
 
     # tell availablename about our current name:
-    state = ResourceSchemaState(owner_name, resource_name)
+    state = NodeSchemaState(owner_name, resource_name)
     data = ResourceSchema().to_python(data, state=state)
 
     resource.name = data['name']

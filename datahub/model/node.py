@@ -30,6 +30,7 @@ class Node(db.Model):
                 'type': self.discriminator,
                 'owner': self.owner.name}
 
+
 class Resource(Node):
     __mapper_args__ = {'polymorphic_identity': 'resource'}
     url = db.Column(db.Unicode(255))
@@ -47,4 +48,20 @@ class Resource(Node):
 
     def __repr__(self):
         return '<Resource %r>' % self.name
+
+
+class Dataset(Node):
+    __mapper_args__ = {'polymorphic_identity': 'dataset'}
+
+    def __init__(self, owner, name, summary):
+        self.owner = owner
+        self.name = name
+        self.summary = summary
+
+    def to_dict(self):
+        d = super(Dataset, self).to_dict()
+        return d
+
+    def __repr__(self):
+        return '<Dataset %r>' % self.name
 

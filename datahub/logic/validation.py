@@ -27,17 +27,18 @@ class URL(FancyValidator):
         return value
 
 
-class AvailableResourceName(FancyValidator):
-    """ Checks if a resource with the given name exists for the 
+class AvailableNodeName(FancyValidator):
+    """ Checks if a node with the given name exists for the 
     specified owner. """
 
     def _to_python(self, value, state):
-        from datahub.logic.resource import get
+        from datahub.logic.node import get
         existing = get(state.owner_name, value)
         if existing and (state.current_name is None or \
             state.current_name == value):
             raise Invalid('Name is taken.', value, None)
         return value
+
 
 class AvailableAccountName(FancyValidator):
     """ Checks if a resource with the given name exists for the 
