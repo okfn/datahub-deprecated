@@ -115,6 +115,28 @@ class DatasetUpdatedEvent(Event):
         self.data = {'dataset': dataset.name, 
                      'owner': dataset.owner.name}
 
+class DatasetAddResourceEvent(Event):
+    __mapper_args__ = {'polymorphic_identity': 'dataset_add_resource'}
+
+    def __init__(self, account, dataset, resource):
+        super(DatasetAddResourceEvent, self).__init__(account, 
+            resource.summary)
+        self.data = {'dataset_name': dataset.name, 
+                     'dataset_owner': dataset.owner.name,
+                     'resource_name': resource.name,
+                     'resource_owner': resource.owner.name}
+
+class DatasetRemoveResourceEvent(Event):
+    __mapper_args__ = {'polymorphic_identity': 'dataset_remove_resource'}
+
+    def __init__(self, account, dataset, resource):
+        super(DatasetRemoveResourceEvent, self).__init__(account, 
+            resource.summary)
+        self.data = {'dataset_name': dataset.name, 
+                     'dataset_owner': dataset.owner.name,
+                     'resource_name': resource.name,
+                     'resource_owner': resource.owner.name}
+
 class DatasetDeletedEvent(Event):
     __mapper_args__ = {'polymorphic_identity': 'dataset_deleted'}
 

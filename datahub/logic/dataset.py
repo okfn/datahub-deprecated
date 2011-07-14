@@ -3,6 +3,8 @@ from datahub.exc import NotFound
 from datahub.model import Dataset, Account
 from datahub.model.event import DatasetCreatedEvent
 from datahub.model.event import DatasetUpdatedEvent
+from datahub.model.event import DatasetAddResourceEvent
+from datahub.model.event import DatasetRemoveResourceEvent
 from datahub.model.event import DatasetDeletedEvent
 
 from datahub.logic import account, resource
@@ -79,6 +81,11 @@ def add_resource(owner_name, dataset_name, resource_data):
     res = resource.find(resource_data['owner'], resource_data['name'])
     if not res in dataset.resources:
         dataset.resources.append(res)
+
+        # FIXME: use current_user, not owner.
+        event_ = DatasetAddResourceEvent(dataset.owner, 
+                        dataset, res)
+        event.emit(event_, [dataset, res])
     db.session.commit()
 
 def remove_resource(owner_name, dataset_name, resource_owner,
@@ -87,6 +94,11 @@ def remove_resource(owner_name, dataset_name, resource_owner,
     res = resource.find(resource_owner, resource_name)
     if res in dataset.resources:
         dataset.resources.remove(res)
+
+        # FIXME: use current_user, not owner.
+        event_ = DatasetRemoveResourceEvent(dataset.owner, 
+                        dataset, res)
+        event.emit(event_, [dataset, res])
     db.session.commit()
 
 def delete(owner_name, dataset_name):

@@ -7,6 +7,8 @@ from datahub.model.event import ResourceDeletedEvent
 
 from datahub.model.event import DatasetCreatedEvent
 from datahub.model.event import DatasetUpdatedEvent
+from datahub.model.event import DatasetAddResourceEvent
+from datahub.model.event import DatasetRemoveResourceEvent
 from datahub.model.event import DatasetDeletedEvent
 
 from datahub.model.event import AccountCreatedEvent
@@ -117,6 +119,46 @@ class DatasetUpdatedEventRenderer(EventRenderer):
         return url_for('node', account=self.event.data['owner'], 
                 node=self.event.data['dataset'], _external=True)
 
+class DatasetAddResourceEventRenderer(EventRenderer):
+    html_template = '''<verb>added</verb> the resource 
+        <a href='%(resource_url)s'>%(resource_owner)s/%(resource_name)s</a>
+        to the dataset
+        <a href='%(dataset_url)s'>%(dataset_owner)s/%(dataset_name)s</a>'''
+
+    def params(self):
+        data = self.event.data.copy()
+        data['resource_url'] = url_for('node', 
+                              owner=data['resource_owner'], 
+                              node=data['resource_name'])
+        data['dataset_url'] = url_for('node', 
+                              owner=data['dataset_owner'], 
+                              node=data['dataset_name'])
+        return data
+
+    def url(self):
+        return url_for('node', account=self.event.data['dataset_owner'], 
+                node=self.event.data['dataset_name'], _external=True)
+
+class DatasetRemoveResourceEventRenderer(EventRenderer):
+    html_template = '''<verb>removed</verb> the resource 
+        <a href='%(resource_url)s'>%(resource_owner)s/%(resource_name)s</a>
+        from the dataset
+        <a href='%(dataset_url)s'>%(dataset_owner)s/%(dataset_name)s</a>'''
+
+    def params(self):
+        data = self.event.data.copy()
+        data['resource_url'] = url_for('node', 
+                              owner=data['resource_owner'], 
+                              node=data['resource_name'])
+        data['dataset_url'] = url_for('node', 
+                              owner=data['dataset_owner'], 
+                              node=data['dataset_name'])
+        return data
+
+    def url(self):
+        return url_for('node', account=self.event.data['dataset_owner'], 
+                node=self.event.data['dataset_name'], _external=True)
+
 class DatasetDeletedEventRenderer(EventRenderer):
     html_template = '''<verb>deleted</verb> the dataset
         %(owner)s/%(dataset)s'''
@@ -131,6 +173,8 @@ RENDERERS = {
 
     DatasetCreatedEvent: DatasetCreatedEventRenderer,
     DatasetUpdatedEvent: DatasetUpdatedEventRenderer,
+    DatasetAddResourceEvent: DatasetAddResourceEventRenderer,
+    DatasetRemoveResourceEvent: DatasetRemoveResourceEventRenderer,
     DatasetDeletedEvent: DatasetDeletedEventRenderer,
 
     AccountCreatedEvent: AccountCreatedEventRenderer,
