@@ -46,7 +46,7 @@ def create(owner_name, data):
     data = ResourceSchema().to_python(data, state=state)
 
     resource = Resource(owner, data['name'], data['url'],
-                        data['summary'])
+                        data['summary'], data['meta'])
     db.session.add(resource)
     db.session.flush()
     index_add(resource)
@@ -68,6 +68,7 @@ def update(owner_name, resource_name, data):
     resource.name = data['name']
     resource.url = data['url']
     resource.summary = data['summary']
+    resource.meta = data['meta']
     index_add(resource)
 
     event_ = ResourceUpdatedEvent(current_user, resource)

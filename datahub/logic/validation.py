@@ -39,6 +39,22 @@ class AvailableNodeName(FancyValidator):
             raise Invalid('Name is taken.', value, None)
         return value
 
+class Metadata(FancyValidator):
+    """ Checks for arbitrary metadata in a dictionary submitted via 
+    the JSON API. """
+
+    def _dict_keys(self, dictionary, value):
+        for k, v in dictionary.items():
+            if not VALID_NAME.match(k):
+                raise Invalid('Invalid metadata key: %s.' % k, value, None)
+            if isinstance(v, dict):
+                self._dict_keys(v, value)
+
+    def _to_python(self, value, state):
+        if not isinstance(value, dict):
+            raise Invalid('Metadata must be a dictionary.', value, None)
+        self._dict_keys(value, value)
+        return value
 
 class AvailableAccountName(FancyValidator):
     """ Checks if a resource with the given name exists for the 

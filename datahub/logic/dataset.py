@@ -11,7 +11,7 @@ from datahub.model.event import DatasetDeletedEvent
 from datahub.logic import account, resource
 from datahub.logic import event
 from datahub.logic.search import index_add, index_delete
-from datahub.logic.node import NodeSchema, NodeSchemaState
+from datahub.logic.node import NodeSchema, NodeSchemaState, NodeReference
 from datahub.logic.node import get as get_node, find as find_node
 
 class DatasetSchema(NodeSchema):
@@ -45,7 +45,8 @@ def create(owner_name, data):
     state = NodeSchemaState(owner_name, None)
     data = DatasetSchema().to_python(data, state=state)
 
-    dataset = Dataset(owner, data['name'], data['summary'])
+    dataset = Dataset(owner, data['name'], data['summary'],
+                      data['meta'])
     db.session.add(dataset)
     db.session.flush()
     index_add(dataset)
@@ -66,6 +67,7 @@ def update(owner_name, dataset_name, data):
 
     dataset.name = data['name']
     dataset.summary = data['summary']
+    dataset.meta = data['meta']
     index_add(dataset)
 
     event_ = DatasetUpdatedEvent(current_user, dataset)
@@ -79,10 +81,13 @@ def list_resources(owner_name, dataset_name):
     require.dataset.read(dataset)
     return dataset.resources
 
-def add_resource(owner_name, dataset_name, resource_data):
+def add_resource(owner_name, dataset_name, data):
     dataset = find(owner_name, dataset_name)
     require.dataset.add_resource(dataset)
-    res = resource.find(resource_data['owner'], resource_data['name'])
+
+    data = NodeReference().to_python(data)
+
+    res = resource.find(data['owner'], data['name'])
     if not res in dataset.resources:
         dataset.resources.append(res)
 

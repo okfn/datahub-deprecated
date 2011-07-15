@@ -2,6 +2,7 @@ from datetime import datetime
 import json
 
 from werkzeug.exceptions import NotFound
+from formencode.variabledecode import NestedVariables
 from flask import Response
 
 MIME_TYPES = {
@@ -28,8 +29,8 @@ def request_content(request):
     if format == 'json':
         return json.loads(request.data)
     else:
-        # TODO: get some kind of nested structure unrolling in here.
-        return request.form.copy()
+        nv = NestedVariables()
+        return nv.to_python(request.form)
 
 class JSONEncoder(json.JSONEncoder):
     """ This encoder will serialize all entities that have a to_dict

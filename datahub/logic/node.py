@@ -5,7 +5,7 @@ from datahub.auth import require
 from datahub.model import Node, Account
 
 from datahub.logic.search import index_add
-from datahub.logic.validation import Name, AvailableNodeName
+from datahub.logic.validation import Name, AvailableNodeName, Metadata
 
 class NodeSchemaState():
     """ Used to let the AvailableNodeName validator know that the 
@@ -20,6 +20,12 @@ class NodeSchema(Schema):
     name = All(Name(not_empty=True), AvailableNodeName())
     summary = validators.String(min=0, max=3000, if_missing='',
                                 if_empty='')
+    meta = Metadata(if_missing={}, if_empty={})
+
+class NodeReference(Schema):
+    allow_extra_fields = True
+    owner = Name(not_empty=True)
+    name = Name(not_empty=True)
 
 def get(owner_name, node_name):
     """ Get will try to find a node and return None if no resource is

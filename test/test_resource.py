@@ -128,14 +128,33 @@ class ResourceTestCase(unittest.TestCase):
         assert res.status.startswith("400"), res
         data = json.loads(res.data)
         assert 'name' in data['errors'], data
-
+    
+    def test_create_with_meta(self):
         data = RESOURCE_FIXTURE.copy() 
-        data['url'] = 'not really a url'
-        res = self.app.post('/api/v1/resource/fixture', data=data, 
-                            headers={'Accept': JSON, 'Authorization': AUTHZ})
+        data['name'] = 'meta-file'
+        data['meta'] = {'non_schema': 'hooray'}
+        res = self.app.post('/api/v1/resource/fixture', 
+                            data=json.dumps(data), 
+                            content_type=JSON,
+                            follow_redirects=True,
+                            headers={'Accept': JSON, 
+                                     'Authorization': AUTHZ})
+        assert res.status.startswith("200"), res
+        data = json.loads(res.data)
+        assert 'hooray'==data['meta']['non_schema'], data
+
+    def test_create_with_meta_invalid_key(self):
+        data = RESOURCE_FIXTURE.copy() 
+        data['name'] = 'meta-file'
+        data['meta'] = {'non schema': 'hooray'}
+        res = self.app.post('/api/v1/resource/fixture', 
+                            data=json.dumps(data), 
+                            content_type=JSON,
+                            headers={'Accept': JSON,
+                                     'Authorization': AUTHZ})
         assert res.status.startswith("400"), res
         data = json.loads(res.data)
-        assert 'url' in data['errors'], data
+        assert 'meta' in data['errors'], data
 
     def test_create_missing_data(self):
         data = RESOURCE_FIXTURE.copy()

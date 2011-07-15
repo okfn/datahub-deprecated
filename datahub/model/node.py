@@ -2,6 +2,7 @@ from datetime import datetime
 from datahub.core import db
 
 from datahub.model.account import Account
+from datahub.model.types import JSONType
 
 datasets_resources_table = db.Table('datasets_resources', db.metadata,
     db.Column('dataset_id', db.Integer, db.ForeignKey("node.id"), primary_key=True),
@@ -20,6 +21,7 @@ class Node(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Unicode(1000))
     summary = db.Column(db.UnicodeText)
+    meta = db.Column(JSONType, default=dict)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow,
                            onupdate=datetime.utcnow)
@@ -34,6 +36,7 @@ class Node(db.Model):
                 'created_at': self.created_at,
                 'updated_at': self.updated_at,
                 'type': self.discriminator,
+                'meta': self.meta,
                 'owner': self.owner.name}
 
 
@@ -41,11 +44,12 @@ class Resource(Node):
     __mapper_args__ = {'polymorphic_identity': 'resource'}
     url = db.Column(db.Unicode(255))
 
-    def __init__(self, owner, name, url, summary):
+    def __init__(self, owner, name, url, summary, meta):
         self.owner = owner
         self.name = name
         self.url = url
         self.summary = summary
+        self.meta = meta
 
     def to_dict(self):
         d = super(Resource, self).to_dict()
@@ -59,10 +63,11 @@ class Resource(Node):
 class Dataset(Node):
     __mapper_args__ = {'polymorphic_identity': 'dataset'}
 
-    def __init__(self, owner, name, summary):
+    def __init__(self, owner, name, summary, meta):
         self.owner = owner
         self.name = name
         self.summary = summary
+        self.meta = meta
 
     def to_dict(self):
         d = super(Dataset, self).to_dict()

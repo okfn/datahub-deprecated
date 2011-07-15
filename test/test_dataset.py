@@ -139,6 +139,33 @@ class DatasetTestCase(unittest.TestCase):
         assert res.status.startswith("400"), res
         data = json.loads(res.data)
         assert 'name' in data['errors'], data
+    
+    def test_create_with_meta(self):
+        data = DATASET_FIXTURE.copy() 
+        data['name'] = 'meta-world'
+        data['meta'] = {'non_schema': 'hooray'}
+        res = self.app.post('/api/v1/dataset/fixture', 
+                            data=json.dumps(data), 
+                            content_type=JSON,
+                            follow_redirects=True,
+                            headers={'Accept': JSON, 
+                                     'Authorization': AUTHZ})
+        assert res.status.startswith("200"), res
+        data = json.loads(res.data)
+        assert 'hooray'==data['meta']['non_schema'], data
+
+    def test_create_with_meta_invalid_key(self):
+        data = RESOURCE_FIXTURE.copy() 
+        data['name'] = 'meta-world'
+        data['meta'] = {'non schema': 'hooray'}
+        res = self.app.post('/api/v1/dataset/fixture', 
+                            data=json.dumps(data), 
+                            content_type=JSON,
+                            headers={'Accept': JSON,
+                                     'Authorization': AUTHZ})
+        assert res.status.startswith("400"), res
+        data = json.loads(res.data)
+        assert 'meta' in data['errors'], data
 
     def test_add_resource_to_dataset(self):
         res = self.app.post('/api/v1/resource/fixture',

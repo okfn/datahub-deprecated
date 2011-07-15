@@ -1,6 +1,7 @@
 
 Near-Term TODO:
-  * Authoriztaion support
+  --- * Authoriztaion support
+  * Metadata support
   * Search indexing
   * JS Quick Add buttons
   * Dataset edit
