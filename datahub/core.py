@@ -4,6 +4,7 @@ import warnings; warnings.filterwarnings('ignore', 'Unicode type received non-un
 from flask import Flask
 from flaskext.sqlalchemy import SQLAlchemy
 from flaskext.login import LoginManager, current_user
+from flaskext.mail import Mail
 
 from datahub import default_settings
 
@@ -13,6 +14,8 @@ app.config.from_envvar('DATAHUB_SETTINGS', silent=True)
 
 login_manager = LoginManager()
 login_manager.setup_app(app)
+
+mail = Mail(app)
 
 db = SQLAlchemy(app)
 

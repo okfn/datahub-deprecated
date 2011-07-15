@@ -1,6 +1,7 @@
 from formencode import Schema, All, validators
+from flaskext.mail import Message
 
-from datahub.core import db
+from datahub.core import db, mail, app
 from datahub.exc import NotFound
 from datahub.auth import require
 from datahub.model import Account
@@ -62,3 +63,11 @@ def rebuild():
     """ Rebuild the search index for all accounts. """
     for account in Account.query:
         index_add(account)
+
+def send_mail(account, subject, body):
+    message = Message(subject, 
+            recipients=[account.email],
+            body=body,
+            sender = (app.config['SITE_NAME'], 
+                      app.config['SITE_SENDER']))
+    mail.send(message)

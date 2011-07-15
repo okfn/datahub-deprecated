@@ -3,6 +3,7 @@ DEBUG = True
 SECRET_KEY = 'no'
 
 SITE_NAME = 'DataHub'
+SITE_SENDER = 'support@datahub'
 
 BROKER_TRANSPORT = "sqlakombu.transport.Transport"
 CELERY_BACKEND = "database" 
