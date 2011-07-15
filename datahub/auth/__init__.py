@@ -3,6 +3,9 @@ import inspect
 from datahub.exc import Forbidden
 
 import account
+import node
+import resource
+
 from util import logged_in
 
 class Requirement(object):

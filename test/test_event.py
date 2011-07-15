@@ -5,6 +5,7 @@ from datahub import core
 from datahub import model
 
 from util import make_test_app, tear_down_test_app
+from util import create_fixture_user, AUTHZ
 from test_resource import RESOURCE_FIXTURE
 
 class EventTestCase(unittest.TestCase):
@@ -17,16 +18,13 @@ class EventTestCase(unittest.TestCase):
         tear_down_test_app()
 
     def make_fixtures(self):
-        # TODO: call logic layer instead, once there is one:
-        user = model.User('fixtures', 'Mr. Fixture', 'fix@ture.org',
-                          'secret')
-        core.db.session.add(user)
-        core.db.session.commit()
-
-        self.app.post('/api/v1/resource/fixtures', data=RESOURCE_FIXTURE)
+        create_fixture_user(self.app)
+        self.app.post('/api/v1/resource/fixture', 
+                headers={'Authorization': AUTHZ},
+                data=RESOURCE_FIXTURE)
 
     def test_resource_create_event_exists(self):
-        res = self.app.get('/api/v1/event/1')
+        res = self.app.get('/api/v1/event/2')
         assert res.status.startswith("200"), res.status
         body = json.loads(res.data)
         assert body['type'] == 'resource_created'
@@ -58,23 +56,20 @@ class EventFeedTestCase(unittest.TestCase):
         tear_down_test_app()
 
     def make_fixtures(self):
-        # TODO: call logic layer instead, once there is one:
-        user = model.User('fixtures', 'Mr. Fixture', 'fix@ture.org',
-                          'secret')
-        core.db.session.add(user)
-        core.db.session.commit()
-
-        self.app.post('/api/v1/resource/fixtures', data=RESOURCE_FIXTURE)
+        create_fixture_user(self.app)
+        self.app.post('/api/v1/resource/fixture', 
+                headers={'Authorization': AUTHZ},
+                data=RESOURCE_FIXTURE)
 
     def test_feed_for_user(self):
-        res = self.app.get('/fixtures.atom')
+        res = self.app.get('/fixture.atom')
         assert '<entry>' in res.data, res.data
         assert RESOURCE_FIXTURE['name'] in res.data, res.data
         assert '<summary type="html">%s</summary' % \
                 RESOURCE_FIXTURE['summary'] in res.data, res.data
 
     def test_feed_for_node(self):
-        res = self.app.get('/fixtures/my-file.atom')
+        res = self.app.get('/fixture/my-file.atom')
         assert '<entry>' in res.data, res.data
         assert RESOURCE_FIXTURE['name'] in res.data, res.data
         assert '<summary type="html">%s</summary' % \

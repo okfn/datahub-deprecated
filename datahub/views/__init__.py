@@ -46,7 +46,7 @@ def node_feed(owner, node):
 @app.route('/resource', methods=['POST'])
 def resource_create():
     """ Create a new resource for the given user. """
-    # FIXME: handle different kinds of nodes.
+    require.logged_in()
     owner = current_user.name
     data = request_content(request)
     try:
@@ -61,7 +61,7 @@ def resource_create():
 @app.route('/dataset', methods=['POST'])
 def dataset_create():
     """ Create a new dataset for the given user. """
-    # FIXME: handle different kinds of nodes.
+    require.logged_in()
     owner = current_user.name
     data = request_content(request)
     try:

@@ -1,5 +1,6 @@
-from datahub.core import db
+from datahub.core import db, current_user
 from datahub.exc import NotFound
+from datahub.auth import require
 from datahub.model import Resource, Account
 from datahub.model.event import ResourceCreatedEvent
 from datahub.model.event import ResourceUpdatedEvent
@@ -34,10 +35,12 @@ def find(owner_name, resource_name):
     if not isinstance(resource, Resource):
         raise NotFound('Not a resource: %s / %s' % (owner_name, 
                        resource_name))
+    require.resource.read(resource)
     return resource
 
 def create(owner_name, data):
     owner = account.find(owner_name)
+    require.resource.create(owner)
 
     state = NodeSchemaState(owner_name, None)
     data = ResourceSchema().to_python(data, state=state)
@@ -48,8 +51,7 @@ def create(owner_name, data):
     db.session.flush()
     index_add(resource)
 
-    # FIXME: use current_user, not owner.
-    event_ = ResourceCreatedEvent(owner, resource)
+    event_ = ResourceCreatedEvent(current_user, resource)
     event.emit(event_, [resource])
 
     db.session.commit()
@@ -57,6 +59,7 @@ def create(owner_name, data):
 
 def update(owner_name, resource_name, data):
     resource = find(owner_name, resource_name)
+    require.resource.update(resource)
 
     # tell availablename about our current name:
     state = NodeSchemaState(owner_name, resource_name)
@@ -67,8 +70,7 @@ def update(owner_name, resource_name, data):
     resource.summary = data['summary']
     index_add(resource)
 
-    # FIXME: use current_user, not owner.
-    event_ = ResourceUpdatedEvent(resource.owner, resource)
+    event_ = ResourceUpdatedEvent(current_user, resource)
     event.emit(event_, [resource])
 
     db.session.commit()
@@ -77,9 +79,9 @@ def update(owner_name, resource_name, data):
 
 def delete(owner_name, resource_name):
     resource = find(owner_name, resource_name)
+    require.resource.delete(resource)
 
-    # FIXME: use current_user, not owner.
-    event_ = ResourceDeletedEvent(resource.owner, resource)
+    event_ = ResourceDeletedEvent(current_user, resource)
     event.emit(event_, [resource])
 
     db.session.delete(resource)

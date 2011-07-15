@@ -44,6 +44,13 @@ class ProfileTestCase(unittest.TestCase):
         body = json.loads(res.data)
         assert body[0]['type']=='account_updated', body
 
+    def test_account_profile_put_noauth(self):
+        body = {'name': 'invalid'}
+        res = self.app.put('/api/v1/account/fixture', 
+                data=body,
+                headers={'Accept': JSON})
+        assert res.status.startswith("403"), res
+
     def test_account_profile_put_invalid_name(self):
         body = {'name': 'fixture renamed invalid'}
         res = self.app.put('/api/v1/account/fixture', 
@@ -109,9 +116,10 @@ class UserWebInterfaceTestCase(unittest.TestCase):
         assert res.status.startswith("404"), res.status
 
     def test_login_user(self):
+        app = make_test_app(use_cookies=True)
         form_content = {'login': 'fixture', 
                         'password': 'password'}
-        res = self.app.post('/login', data=form_content,
+        res = app.post('/login', data=form_content,
                 follow_redirects=True)
         assert res.status.startswith("200"), res
         assert 'Fixture' in res.data, res

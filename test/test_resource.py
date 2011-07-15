@@ -12,7 +12,7 @@ RESOURCE_FIXTURE = {'name': 'my-file',
                     'summary': 'A very neat resource!'}
 
 from util import make_test_app, tear_down_test_app
-from util import create_fixture_user
+from util import create_fixture_user, AUTHZ
 
 class ResourceTestCase(unittest.TestCase):
 
@@ -25,7 +25,9 @@ class ResourceTestCase(unittest.TestCase):
 
     def make_fixtures(self):
         create_fixture_user(self.app)
-        self.app.post('/api/v1/resource/fixture', data=RESOURCE_FIXTURE)
+        self.app.post('/api/v1/resource/fixture', 
+                      data=RESOURCE_FIXTURE,
+                      headers={'Authorization': AUTHZ})
 
     def test_user_resource_index(self):
         res = self.app.get('/api/v1/resource/fixture')
@@ -36,7 +38,8 @@ class ResourceTestCase(unittest.TestCase):
         data = json.dumps({'name': 'world', 'url': 'http://foos.com', 
                            'summary': 'A foo'})
         res = self.app.post('/api/v1/resource/fixture', data=data, 
-                headers={'Accept': JSON}, content_type=JSON,
+                headers={'Accept': JSON, 'Authorization': AUTHZ}, 
+                content_type=JSON,
                 follow_redirects=True)
         body = json.loads(res.data)
         assert isinstance(body, dict)
@@ -45,10 +48,19 @@ class ResourceTestCase(unittest.TestCase):
         data = {'name': 'world', 'url': 'http://foos.com', 
                 'summary': 'A foo'}
         res = self.app.post('/api/v1/resource/fixture', data=data, 
-                headers={'Accept': JSON}, follow_redirects=True)
+                headers={'Accept': JSON, 'Authorization': AUTHZ}, 
+                follow_redirects=True)
         body = json.loads(res.data)
         assert isinstance(body, dict)
         assert body['name']=='world', body
+    
+    def test_user_resource_create_no_auth(self):
+        data = {'name': 'world', 'url': 'http://foos.com', 
+                'summary': 'A foo'}
+        res = self.app.post('/api/v1/resource/fixture', data=data, 
+                headers={'Accept': JSON}, 
+                follow_redirects=True)
+        assert res.status.startswith("403"), res.status
     
     #def test_user_resource_create_in_wui(self):
     #    data = {'name': 'world', 'url': 'http://foos.com', 
@@ -72,7 +84,7 @@ class ResourceTestCase(unittest.TestCase):
 
     def test_nonexistent_resource_get_as_json(self):
         res = self.app.get('/api/v1/resource/fixture/no-such-file',
-                headers={'Accept': JSON})
+                headers={'Accept': JSON, 'Authorization': AUTHZ})
         assert res.status.startswith("404"), res.status
         body = json.loads(res.data)
         assert 'status' in body, body
@@ -81,20 +93,28 @@ class ResourceTestCase(unittest.TestCase):
         data = RESOURCE_FIXTURE.copy() 
         data['name'] = 'thy-file'
         res = self.app.put('/api/v1/resource/fixture/no-file',
+                           headers={'Authorization': AUTHZ}, 
                            data=data)
         assert res.status.startswith("404"), res.data
         
         res = self.app.put('/api/v1/resource/fixture/my-file',
+                           data=data)
+        assert res.status.startswith("403"), res.data
+        
+        res = self.app.put('/api/v1/resource/fixture/my-file',
+                           headers={'Authorization': AUTHZ}, 
                            data=data)
         res = self.app.get('/api/v1/resource/fixture/thy-file')
         body = json.loads(res.data)
         assert body['name']=='thy-file', body
 
     def test_resource_delete(self):
-        res = self.app.delete('/api/v1/resource/fixture/no-file')
+        res = self.app.delete('/api/v1/resource/fixture/no-file',
+                headers={'Authorization': AUTHZ})
         assert res.status.startswith("404"), res.data
         
-        res = self.app.delete('/api/v1/resource/fixture/my-file')
+        res = self.app.delete('/api/v1/resource/fixture/my-file',
+                headers={'Authorization': AUTHZ})
         assert res.status.startswith("410"), res.data
 
         res = self.app.get('/api/v1/resource/fixture/my-file')
@@ -104,7 +124,7 @@ class ResourceTestCase(unittest.TestCase):
         data = RESOURCE_FIXTURE.copy() 
         data['name'] = 'invalid name'
         res = self.app.post('/api/v1/resource/fixture', data=data, 
-                            headers={'Accept': JSON})
+                            headers={'Accept': JSON, 'Authorization': AUTHZ})
         assert res.status.startswith("400"), res
         data = json.loads(res.data)
         assert 'name' in data['errors'], data
@@ -112,7 +132,7 @@ class ResourceTestCase(unittest.TestCase):
         data = RESOURCE_FIXTURE.copy() 
         data['url'] = 'not really a url'
         res = self.app.post('/api/v1/resource/fixture', data=data, 
-                            headers={'Accept': JSON})
+                            headers={'Accept': JSON, 'Authorization': AUTHZ})
         assert res.status.startswith("400"), res
         data = json.loads(res.data)
         assert 'url' in data['errors'], data
@@ -122,7 +142,7 @@ class ResourceTestCase(unittest.TestCase):
         data['name'] = 'foo'
         data['url'] = ''
         res = self.app.post('/api/v1/resource/fixture', data=data, 
-                            headers={'Accept': JSON})
+                            headers={'Accept': JSON, 'Authorization': AUTHZ})
         assert res.status.startswith("400"), res
         data = json.loads(res.data)
         assert 'url' in data['errors'], data
@@ -130,7 +150,7 @@ class ResourceTestCase(unittest.TestCase):
         data = RESOURCE_FIXTURE.copy() 
         data['name'] = ''
         res = self.app.post('/api/v1/resource/fixture', data=data, 
-                            headers={'Accept': JSON})
+                            headers={'Accept': JSON, 'Authorization': AUTHZ})
         assert res.status.startswith("400"), res
         data = json.loads(res.data)
         assert 'name' in data['errors'], data
@@ -138,7 +158,7 @@ class ResourceTestCase(unittest.TestCase):
     def test_create_existing_name(self):
         res = self.app.post('/api/v1/resource/fixture', 
                             data=RESOURCE_FIXTURE, 
-                            headers={'Accept': JSON})
+                            headers={'Accept': JSON, 'Authorization': AUTHZ})
         assert res.status.startswith("400"), res
         data = json.loads(res.data)
         assert 'name' in data['errors'], data
