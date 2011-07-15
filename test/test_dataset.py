@@ -12,7 +12,7 @@ DATASET_FIXTURE = {'name': 'world',
 
 from test_resource import RESOURCE_FIXTURE
 from util import make_test_app, tear_down_test_app
-from util import create_fixture_user
+from util import create_fixture_user, AUTHZ
 
 class DatasetTestCase(unittest.TestCase):
 
@@ -121,7 +121,7 @@ class DatasetTestCase(unittest.TestCase):
     def test_add_resource_to_dataset(self):
         res = self.app.post('/api/v1/resource/fixture',
                             data=RESOURCE_FIXTURE, 
-                            headers={'Accept': JSON})
+                            headers={'Accept': JSON, 'Authorization': AUTHZ})
 
         data = {'owner': 'fixture',
                 'name': RESOURCE_FIXTURE['name']}
@@ -147,7 +147,7 @@ class DatasetTestCase(unittest.TestCase):
     def test_add_non_existing_resource_to_dataset(self):
         res = self.app.post('/api/v1/resource/fixture',
                             data=RESOURCE_FIXTURE, 
-                            headers={'Accept': JSON})
+                            headers={'Accept': JSON, 'Authorization': AUTHZ})
 
         data = {'owner': 'fixture'}
         res = self.app.post('/api/v1/dataset/fixture/world/resources',
@@ -165,7 +165,7 @@ class DatasetTestCase(unittest.TestCase):
     def test_remove_resource_from_dataset(self):
         res = self.app.post('/api/v1/resource/fixture',
                             data=RESOURCE_FIXTURE, 
-                            headers={'Accept': JSON})
+                            headers={'Accept': JSON, 'Authorization': AUTHZ})
 
         data = {'owner': 'fixture',
                 'name': RESOURCE_FIXTURE['name']}
@@ -183,7 +183,7 @@ class DatasetTestCase(unittest.TestCase):
                             headers={'Accept': JSON})
         res = self.app.get('/api/v1/dataset/fixture/world/resources',
                             data=data,
-                            headers={'Accept': JSON})
+                            headers={'Accept': JSON,})
         body = json.loads(res.data)
         assert len(body)==0, body
 
