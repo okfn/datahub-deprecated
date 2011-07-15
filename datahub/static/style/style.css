@@ -431,8 +431,10 @@ form input[type=submit]:active {
 
 /* Pager */
 .pager {
+  color: #666;
   text-align: center;
   margin-bottom: 0.5em;
+  margin-top: 0.5em;
 }
 
 .pager .next {
