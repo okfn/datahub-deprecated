@@ -7,6 +7,7 @@ from datahub.core import app, login_manager, current_user
 from datahub.model import Resource, Dataset
 from datahub.auth import require
 from datahub import logic
+from datahub.pager import Pager
 from datahub.util import request_content
 
 from datahub.views.resource_api import api as resource_api
@@ -34,6 +35,7 @@ def node(owner, node):
 def node_feed(owner, node):
     resource = logic.resource.find(owner, node)
     events = logic.event.latest_by_entity(resource)
+    events.limit(40)
     entries = map(logic.event.event_to_entry, events)
     feed = AtomFeed(title="%s / %s" % (owner, node),
                     id='urn:datahub:%s/%s' % (owner, node),
@@ -82,6 +84,7 @@ def dashboard():
 def account_feed(account):
     account = logic.account.find(account)
     events = logic.event.latest_by_entity(account)
+    events.limit(40)
     entries = map(logic.event.event_to_entry, events)
     feed = AtomFeed(title=account.name,
                     id='urn:datahub:%s' % account.name,
@@ -94,10 +97,10 @@ def account_feed(account):
 def account(account):
     account = logic.account.find(account)
     events = logic.event.latest_by_entity(account)
+    events = Pager(events, 'account', request.args, limit=3,
+                   account=account.name)
     return render_template('account/home.html',
                 account=account, events=events)
-
-
 
 @app.route('/register', methods=['GET'])
 def register():

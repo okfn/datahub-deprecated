@@ -18,20 +18,18 @@ def find(id):
         raise NotFound('No such event: %s' % id)
     return event
 
-def latest_by_stream(entity_type, entity_id, limit=50):
-    """ Fetch the `limit` latest events that occured on the given
+def latest_by_stream(entity_type, entity_id):
+    """ Fetch the latest events that occured on the given
     event stream. """
     events = Event.query.join(EventStreamEntry)
     events = events.filter(EventStreamEntry.entity_type==entity_type)
     events = events.filter(EventStreamEntry.entity_id==entity_id)
     events = events.order_by(Event.time.desc())
-    events = events.limit(limit)
-    return events.all()
+    return events
 
-def latest_by_entity(entity, limit=50):
+def latest_by_entity(entity):
     """ Get events for a specific entity. """
-    return latest_by_stream(entity.__tablename__, entity.id, 
-                            limit=limit)
+    return latest_by_stream(entity.__tablename__, entity.id)
 
 def emit(event, streams=[]):
     """ Unlike the other logic.*.create methods, this function 

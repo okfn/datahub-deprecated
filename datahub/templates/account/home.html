@@ -1,3 +1,4 @@
+{% from "pager.html" import pager %}
 {% from "account/parts.html" import account_heading %}
 {% from "resource/parts.html" import create_form as resource_create_form %}
 {% from "resource/parts.html" import mainbar_list_item as resource_mainbar_list_item %}
@@ -25,6 +26,7 @@
           {{ event_list_item(event) }}
         {% endfor %}
       </ul>
+      {{ pager(events) }}
     </div>
   </div>
   <div class="leftbar">
