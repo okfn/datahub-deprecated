@@ -58,6 +58,5 @@ class Pager(object):
         return query.all().__iter__()
 
     def __len__(self):
-        print self.query.count()
         return self.query.count()
 

@@ -1,4 +1,5 @@
 {% from "resource/parts.html" import create_form as resource_create_form %}
+{% from "resource/parts.html" import mainbar_list_item as resource_mainbar_list_item %}
 {% extends "layout.html" %}
 
 {% block head %}
@@ -26,6 +27,12 @@
   <div class="mainbar">
     <div class="box">
       {{ dataset.summary }}
+
+      <hr/>
+
+      {% for resource in dataset.resources %}
+        {{ resource_mainbar_list_item(resource) }}
+      {% endfor %}
     </div>
   </div>
 {% endblock %}
