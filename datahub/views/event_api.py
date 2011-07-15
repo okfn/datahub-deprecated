@@ -2,6 +2,7 @@ from flask import Blueprint, request
 
 from datahub import logic
 from datahub.util import jsonify
+from datahub.pager import Pager
 
 event_api = Blueprint('event_api', __name__)
 
@@ -18,6 +19,8 @@ stream_api = Blueprint('stream_api', __name__)
 def stream(type, id):
     """ Get the latest events on the given event stream. """
     events = logic.event.latest_by_stream(type, id)
+    events = Pager(events, '.stream', request.args, limit=50,
+                   type=type, id=id)
     return jsonify(events)
 
 

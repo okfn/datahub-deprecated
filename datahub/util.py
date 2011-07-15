@@ -6,6 +6,8 @@ from werkzeug.exceptions import NotFound
 from formencode.variabledecode import NestedVariables
 from flask import Response
 
+from datahub.pager import Pager
+
 MIME_TYPES = {
         'text/html': 'html',
         'application/xhtml+xml': 'html',
@@ -52,6 +54,8 @@ class JSONEncoder(json.JSONEncoder):
             return obj.to_dict()
         if isinstance(obj, datetime):
             return obj.isoformat()
+        if isinstance(obj, Pager):
+            return list(obj)
         raise TypeError("%r is not JSON serializable" % obj)
 
 def jsonify(obj, status=200, headers=None):

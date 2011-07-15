@@ -97,7 +97,7 @@ def account_feed(account):
 def account(account):
     account = logic.account.find(account)
     events = logic.event.latest_by_entity(account)
-    events = Pager(events, 'account', request.args, limit=3,
+    events = Pager(events, 'account', request.args, limit=50,
                    account=account.name)
     return render_template('account/home.html',
                 account=account, events=events)

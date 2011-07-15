@@ -9,7 +9,7 @@ def connection():
     return SolrConnection(app.config['SOLR_URL'])
 
 def to_key(entity):
-    return '%s:%s' % (entity.__tablename__, entity.id)
+    return 'datahub/%s//%s' % (entity.__tablename__, entity.id)
 
 def flatten_dict(d, prefix='meta', sep='_'):
     """ Flatten a dict to a list of values with each key 
@@ -57,7 +57,7 @@ def index_delete(entity):
         raise TypeError('Can only index entities with a __tablename__')
     conn = connection()
     try:
-        conn.delete_query('+_key:%s' % to_key(entity))
+        conn.delete_query('+_key:"%s"' % to_key(entity))
         conn.commit()
     finally: 
         conn.close()
