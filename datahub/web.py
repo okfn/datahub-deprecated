@@ -5,7 +5,7 @@ from werkzeug.exceptions import Unauthorized
 from formencode import Invalid
 
 from datahub.core import app, current_user
-from datahub import logic
+from datahub import logic, auth
 from datahub.util import response_format, jsonify
 from datahub import views
 
@@ -20,7 +20,9 @@ def event_title(event):
 
 @app.context_processor
 def set_current_user():
-    return dict(current_user=current_user)
+    """ Set some template context globals. """
+    return dict(current_user=current_user,
+                can=auth)
 
 @app.before_request
 def basic_authentication():
