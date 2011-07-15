@@ -5,6 +5,7 @@ from datahub.exc import Forbidden
 import account
 import node
 import resource
+import dataset
 
 from util import logged_in
 

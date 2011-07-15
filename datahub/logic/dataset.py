@@ -1,5 +1,6 @@
-from datahub.core import db
+from datahub.core import db, current_user
 from datahub.exc import NotFound
+from datahub.auth import require
 from datahub.model import Dataset, Account
 from datahub.model.event import DatasetCreatedEvent
 from datahub.model.event import DatasetUpdatedEvent
@@ -34,10 +35,12 @@ def find(owner_name, dataset_name):
     if not isinstance(dataset, Dataset):
         raise NotFound('Not a dataset: %s / %s' % (owner_name, 
                        dataset_name))
+    require.dataset.read(dataset)
     return dataset
 
 def create(owner_name, data):
     owner = account.find(owner_name)
+    require.dataset.create(owner)
 
     state = NodeSchemaState(owner_name, None)
     data = DatasetSchema().to_python(data, state=state)
@@ -47,8 +50,7 @@ def create(owner_name, data):
     db.session.flush()
     index_add(dataset)
 
-    # FIXME: use current_user, not owner.
-    event_ = DatasetCreatedEvent(owner, dataset)
+    event_ = DatasetCreatedEvent(current_user, dataset)
     event.emit(event_, [dataset])
 
     db.session.commit()
@@ -56,6 +58,7 @@ def create(owner_name, data):
 
 def update(owner_name, dataset_name, data):
     dataset = find(owner_name, dataset_name)
+    require.dataset.update(dataset)
 
     # tell availablename about our current name:
     state = NodeSchemaState(owner_name, dataset_name)
@@ -65,8 +68,7 @@ def update(owner_name, dataset_name, data):
     dataset.summary = data['summary']
     index_add(dataset)
 
-    # FIXME: use current_user, not owner.
-    event_ = DatasetUpdatedEvent(dataset.owner, dataset)
+    event_ = DatasetUpdatedEvent(current_user, dataset)
     event.emit(event_, [dataset])
 
     db.session.commit()
@@ -74,16 +76,17 @@ def update(owner_name, dataset_name, data):
 
 def list_resources(owner_name, dataset_name):
     dataset = find(owner_name, dataset_name)
+    require.dataset.read(dataset)
     return dataset.resources
 
 def add_resource(owner_name, dataset_name, resource_data):
     dataset = find(owner_name, dataset_name)
+    require.dataset.add_resource(dataset)
     res = resource.find(resource_data['owner'], resource_data['name'])
     if not res in dataset.resources:
         dataset.resources.append(res)
 
-        # FIXME: use current_user, not owner.
-        event_ = DatasetAddResourceEvent(dataset.owner, 
+        event_ = DatasetAddResourceEvent(current_user, 
                         dataset, res)
         event.emit(event_, [dataset, res])
     db.session.commit()
@@ -91,11 +94,11 @@ def add_resource(owner_name, dataset_name, resource_data):
 def remove_resource(owner_name, dataset_name, resource_owner,
                     resource_name):
     dataset = find(owner_name, dataset_name)
+    require.dataset.remove_resource(dataset)
     res = resource.find(resource_owner, resource_name)
     if res in dataset.resources:
         dataset.resources.remove(res)
 
-        # FIXME: use current_user, not owner.
         event_ = DatasetRemoveResourceEvent(dataset.owner, 
                         dataset, res)
         event.emit(event_, [dataset, res])
@@ -103,9 +106,9 @@ def remove_resource(owner_name, dataset_name, resource_owner,
 
 def delete(owner_name, dataset_name):
     dataset = find(owner_name, dataset_name)
+    require.dataset.delete(dataset)
 
-    # FIXME: use current_user, not owner.
-    event_ = DatasetDeletedEvent(dataset.owner, dataset)
+    event_ = DatasetDeletedEvent(current_user, dataset)
     event.emit(event_, [dataset])
 
     db.session.delete(dataset)

@@ -25,7 +25,9 @@ class DatasetTestCase(unittest.TestCase):
 
     def make_fixtures(self):
         create_fixture_user(self.app)
-        self.app.post('/api/v1/dataset/fixture', data=DATASET_FIXTURE)
+        self.app.post('/api/v1/dataset/fixture', 
+                headers={'Authorization': AUTHZ},
+                data=DATASET_FIXTURE)
 
     def test_user_dataset_index(self):
         res = self.app.get('/api/v1/dataset/fixture')
@@ -36,7 +38,8 @@ class DatasetTestCase(unittest.TestCase):
         data = json.dumps({'name': 'foo',
                            'summary': 'A foo'})
         res = self.app.post('/api/v1/dataset/fixture', data=data, 
-                headers={'Accept': JSON}, content_type=JSON,
+                headers={'Accept': JSON, 'Authorization': AUTHZ}, 
+                content_type=JSON,
                 follow_redirects=True)
         body = json.loads(res.data)
         assert isinstance(body, dict)
@@ -45,10 +48,18 @@ class DatasetTestCase(unittest.TestCase):
         data = {'name': 'foo',
                 'summary': 'A foo'}
         res = self.app.post('/api/v1/dataset/fixture', data=data, 
-                headers={'Accept': JSON}, follow_redirects=True)
+                headers={'Accept': JSON, 'Authorization': AUTHZ}, 
+                follow_redirects=True)
         body = json.loads(res.data)
         assert isinstance(body, dict)
         assert body['name']=='foo', body
+    
+    def test_user_dataset_create_no_authz(self):
+        data = {'name': 'foo',
+                'summary': 'A foo'}
+        res = self.app.post('/api/v1/dataset/fixture', data=data, 
+                headers={'Accept': JSON}, follow_redirects=True)
+        assert res.status.startswith("403"), res.status
 
     def test_dataset_get(self):
         res = self.app.get('/api/v1/dataset/fixture/world')
@@ -73,20 +84,31 @@ class DatasetTestCase(unittest.TestCase):
         data = DATASET_FIXTURE.copy() 
         data['name'] = 'mars'
         res = self.app.put('/api/v1/dataset/fixture/no-world',
+                           headers={'Authorization': AUTHZ},
                            data=data)
         assert res.status.startswith("404"), res.data
 
         res = self.app.put('/api/v1/dataset/fixture/world',
+                           data=data)
+        assert res.status.startswith("403"), res.data
+
+        res = self.app.put('/api/v1/dataset/fixture/world',
+                           headers={'Authorization': AUTHZ},
                            data=data)
         res = self.app.get('/api/v1/dataset/fixture/mars')
         body = json.loads(res.data)
         assert body['name']=='mars', body
 
     def test_dataset_delete(self):
-        res = self.app.delete('/api/v1/dataset/fixture/no-world')
+        res = self.app.delete('/api/v1/dataset/fixture/no-world',
+                              headers={'Authorization': AUTHZ})
         assert res.status.startswith("404"), res.data
-
+        
         res = self.app.delete('/api/v1/dataset/fixture/world')
+        assert res.status.startswith("403"), res.data
+
+        res = self.app.delete('/api/v1/dataset/fixture/world',
+                              headers={'Authorization': AUTHZ})
         assert res.status.startswith("410"), res.data
 
         res = self.app.get('/api/v1/dataset/fixture/world')
@@ -96,7 +118,7 @@ class DatasetTestCase(unittest.TestCase):
         data = DATASET_FIXTURE.copy() 
         data['name'] = 'invalid name'
         res = self.app.post('/api/v1/dataset/fixture', data=data, 
-                            headers={'Accept': JSON})
+                            headers={'Accept': JSON, 'Authorization': AUTHZ})
         assert res.status.startswith("400"), res
         data = json.loads(res.data)
         assert 'name' in data['errors'], data
@@ -105,7 +127,7 @@ class DatasetTestCase(unittest.TestCase):
         data = DATASET_FIXTURE.copy() 
         data['name'] = ''
         res = self.app.post('/api/v1/dataset/fixture', data=data, 
-                            headers={'Accept': JSON})
+                            headers={'Accept': JSON, 'Authorization': AUTHZ})
         assert res.status.startswith("400"), res
         data = json.loads(res.data)
         assert 'name' in data['errors'], data
@@ -113,7 +135,7 @@ class DatasetTestCase(unittest.TestCase):
     def test_create_existing_name(self):
         res = self.app.post('/api/v1/dataset/fixture', 
                             data=DATASET_FIXTURE, 
-                            headers={'Accept': JSON})
+                            headers={'Accept': JSON, 'Authorization': AUTHZ})
         assert res.status.startswith("400"), res
         data = json.loads(res.data)
         assert 'name' in data['errors'], data
@@ -127,12 +149,12 @@ class DatasetTestCase(unittest.TestCase):
                 'name': RESOURCE_FIXTURE['name']}
         res = self.app.post('/api/v1/dataset/fixture/world/resources',
                             data=data,
-                            headers={'Accept': JSON})
+                            headers={'Accept': JSON, 'Authorization': AUTHZ})
         assert res.status.startswith("302"), res
 
         res = self.app.post('/api/v1/dataset/fixture/no-ds/resources',
                             data=data,
-                            headers={'Accept': JSON})
+                            headers={'Accept': JSON, 'Authorization': AUTHZ})
         assert res.status.startswith("404"), res
 
         res = self.app.get('/api/v1/dataset/fixture/world/resources',
@@ -152,14 +174,14 @@ class DatasetTestCase(unittest.TestCase):
         data = {'owner': 'fixture'}
         res = self.app.post('/api/v1/dataset/fixture/world/resources',
                             data=data,
-                            headers={'Accept': JSON})
+                            headers={'Accept': JSON, 'Authorization': AUTHZ})
         assert res.status.startswith("400"), res
 
         data = {'owner': 'fixture',
                 'name': 'does-not-exist'}
         res = self.app.post('/api/v1/dataset/fixture/world/resources',
                             data=data,
-                            headers={'Accept': JSON})
+                            headers={'Accept': JSON, 'Authorization': AUTHZ})
         assert res.status.startswith("404"), res
 
     def test_remove_resource_from_dataset(self):
@@ -171,7 +193,7 @@ class DatasetTestCase(unittest.TestCase):
                 'name': RESOURCE_FIXTURE['name']}
         res = self.app.post('/api/v1/dataset/fixture/world/resources',
                             data=data,
-                            headers={'Accept': JSON})
+                            headers={'Accept': JSON, 'Authorization': AUTHZ})
         res = self.app.get('/api/v1/dataset/fixture/world/resources',
                             data=data,
                             headers={'Accept': JSON})
@@ -180,7 +202,7 @@ class DatasetTestCase(unittest.TestCase):
         u = '/api/v1/dataset/fixture/world/resources/fixture/%s'
         res = self.app.delete(u % RESOURCE_FIXTURE['name'],
                             data=data,
-                            headers={'Accept': JSON})
+                            headers={'Accept': JSON, 'Authorization': AUTHZ})
         res = self.app.get('/api/v1/dataset/fixture/world/resources',
                             data=data,
                             headers={'Accept': JSON,})

@@ -1,6 +1,7 @@
 from formencode import Schema, All, validators
 
 from datahub.exc import NotFound
+from datahub.auth import require
 from datahub.model import Node, Account
 
 from datahub.logic.search import index_add
@@ -29,11 +30,12 @@ def get(owner_name, node_name):
 
 def find(owner_name, node_name):
     """ Find a node or yield a `NotFound` exception. """
-    resource = get(owner_name, node_name)
-    if resource is None:
-        raise NotFound('No such resource: %s / %s' % (owner_name, 
+    node = get(owner_name, node_name)
+    if node is None:
+        raise NotFound('No such node: %s / %s' % (owner_name, 
                        node_name))
-    return resource
+    require.node.read(node)
+    return node
 
 def rebuild():
     """ Rebuild the search index for all nodes. """
