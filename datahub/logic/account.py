@@ -2,8 +2,8 @@ from formencode import Schema, All, validators
 
 from datahub.core import db
 from datahub.exc import NotFound
+from datahub.auth import require
 from datahub.model import Account
-from datahub.model.event import AccountCreatedEvent
 from datahub.model.event import AccountUpdatedEvent
 
 from datahub.logic import event
@@ -33,11 +33,13 @@ def find(name):
     account = get(name)
     if account is None:
         raise NotFound('No such account: %s' % name)
+    require.account.read(account)
     return account
 
 def update(account_name, data):
     """ Update an account's data. """
     account = find(account_name)
+    require.account.update(account)
 
     # tell availablename about our current name:
     state = AccountSchemaState(account_name)

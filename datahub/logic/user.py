@@ -5,6 +5,7 @@ from flaskext.login import login_user, logout_user
 from formencode import Schema, Invalid, validators
 
 from datahub.core import db, login_manager
+from datahub.auth import require
 from datahub.model import User
 from datahub.model.event import AccountCreatedEvent
 from datahub.model.event import AccountUpdatedEvent
@@ -71,6 +72,7 @@ def null_get(user_name):
     return get(user_name)
 
 def register(data):
+    require.account.create()
     state = AccountSchemaState(None)
     data = RegistrationSchema().to_python(data, state=state)
 
@@ -89,6 +91,8 @@ def register(data):
     return user
 
 def update(user, data):
+    require.account.update(user)
+
     # TODO combine with account.update
     state = AccountSchemaState(user.name)
     data = ProfileSchema().to_python(data, state=state)
@@ -125,3 +129,4 @@ def login(data):
 
 def logout():
     logout_user()
+

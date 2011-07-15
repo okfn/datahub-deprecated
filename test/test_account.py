@@ -7,7 +7,7 @@ from datahub import model
 JSON = 'application/json'
 
 from util import make_test_app, tear_down_test_app
-from util import create_fixture_user
+from util import create_fixture_user, AUTHZ
 
 class ProfileTestCase(unittest.TestCase):
 
@@ -34,7 +34,8 @@ class ProfileTestCase(unittest.TestCase):
 
         body['name']='fixture-renamed'
         res = self.app.put('/api/v1/account/fixture', 
-                data=body, headers={'Accept': JSON})
+                data=body, 
+                headers={'Accept': JSON, 'Authorization': AUTHZ})
         body = json.loads(res.data)
         assert body['name']=='fixture-renamed', body
 
@@ -46,7 +47,8 @@ class ProfileTestCase(unittest.TestCase):
     def test_account_profile_put_invalid_name(self):
         body = {'name': 'fixture renamed invalid'}
         res = self.app.put('/api/v1/account/fixture', 
-                data=body, headers={'Accept': JSON})
+                data=body,
+                headers={'Accept': JSON, 'Authorization': AUTHZ})
         assert res.status.startswith("400"), res
         body = json.loads(res.data)
         assert 'name' in body['errors'], body
@@ -59,7 +61,8 @@ class ProfileTestCase(unittest.TestCase):
     def test_account_profile_put_invalid_email(self):
         body = {'name': 'fixture', 'email': 'bar', 'full_name': 'la la'}
         res = self.app.put('/api/v1/account/fixture', 
-                data=body, headers={'Accept': JSON})
+                data=body,
+                headers={'Accept': JSON, 'Authorization': AUTHZ})
         assert res.status.startswith("400"), res
         body = json.loads(res.data)
         assert 'email' in body['errors'], body

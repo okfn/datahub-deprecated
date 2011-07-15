@@ -5,6 +5,7 @@ from formencode import Invalid, htmlfill
 
 from datahub.core import app, login_manager, current_user
 from datahub.model import Resource, Dataset
+from datahub.auth import require
 from datahub import logic
 from datahub.util import request_content
 
@@ -73,6 +74,7 @@ def dataset_create():
                 errors=inv.unpack_errors())
 
 def dashboard():
+    require.logged_in()
     return render_template('account/dashboard.html',
                 account=account)
 
@@ -99,6 +101,7 @@ def account(account):
 
 @app.route('/register', methods=['GET'])
 def register():
+    require.account.create()
     return render_template('account/register.html')
 
 @app.route('/register', methods=['POST'])
@@ -114,6 +117,7 @@ def register_save():
 
 @app.route('/profile', methods=['GET'])
 def profile():
+    require.account.update(current_user)
     return render_template('account/profile.html',
                            user=current_user)
 
@@ -148,6 +152,7 @@ def login_save():
 
 @app.route("/logout")
 def logout():
+    require.logged_in()
     logic.user.logout()
     flash('You have been logged out.', 'success')
     return redirect(url_for('home'))

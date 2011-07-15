@@ -2,6 +2,9 @@ import inspect
 
 from datahub.exc import Forbidden
 
+import account
+from util import logged_in
+
 class Requirement(object):
     """ Checks a function call and raises an exception if the
     function returns a non-True value. """
