@@ -7,42 +7,36 @@ from datahub import model
 JSON = 'application/json'
 
 from util import make_test_app, tear_down_test_app
+from util import create_fixture_user
 
 class ProfileTestCase(unittest.TestCase):
 
     def setUp(self):
         self.app = make_test_app()
-        self.make_fixtures()
+        create_fixture_user(self.app)
 
     def tearDown(self):
         tear_down_test_app()
 
-    def make_fixtures(self):
-        # TODO: call logic layer instead, once there is one:
-        user = model.User('fixturix', 'Mr. Fixture', 'fix@ture.org',
-                          'secret')
-        core.db.session.add(user)
-        core.db.session.commit()
-
     def test_account_profile_get(self):
         res = self.app.get('/api/v1/account/no-such-user')
         assert res.status.startswith("404"), res.status
-        res = self.app.get('/api/v1/account/fixturix', 
+        res = self.app.get('/api/v1/account/fixture', 
                 headers={'Accept': JSON})
         assert res.status.startswith("200"), res.status
         body = json.loads(res.data)
-        assert body['name']=='fixturix', body
+        assert body['name']=='fixture', body
 
     def test_account_profile_put(self):
-        res = self.app.get('/api/v1/account/fixturix', 
+        res = self.app.get('/api/v1/account/fixture', 
                 headers={'Accept': JSON})
         body = json.loads(res.data)
 
-        body['name']='fixturix-renamed'
-        res = self.app.put('/api/v1/account/fixturix', 
+        body['name']='fixture-renamed'
+        res = self.app.put('/api/v1/account/fixture', 
                 data=body, headers={'Accept': JSON})
         body = json.loads(res.data)
-        assert body['name']=='fixturix-renamed', body
+        assert body['name']=='fixture-renamed', body
 
         res = self.app.get('/api/v1/stream/account/1', 
                 headers={'Accept': JSON})
@@ -50,8 +44,8 @@ class ProfileTestCase(unittest.TestCase):
         assert body[0]['type']=='account_updated', body
 
     def test_account_profile_put_invalid_name(self):
-        body = {'name': 'fixturix renamed invalid'}
-        res = self.app.put('/api/v1/account/fixturix', 
+        body = {'name': 'fixture renamed invalid'}
+        res = self.app.put('/api/v1/account/fixture', 
                 data=body, headers={'Accept': JSON})
         assert res.status.startswith("400"), res
         body = json.loads(res.data)
@@ -60,11 +54,11 @@ class ProfileTestCase(unittest.TestCase):
         res = self.app.get('/api/v1/stream/account/1', 
                 headers={'Accept': JSON})
         body = json.loads(res.data)
-        assert not len(body), body
+        assert len(body)==1, body
 
     def test_account_profile_put_invalid_email(self):
-        body = {'name': 'fixturix', 'email': 'bar', 'full_name': 'la la'}
-        res = self.app.put('/api/v1/account/fixturix', 
+        body = {'name': 'fixture', 'email': 'bar', 'full_name': 'la la'}
+        res = self.app.put('/api/v1/account/fixture', 
                 data=body, headers={'Accept': JSON})
         assert res.status.startswith("400"), res
         body = json.loads(res.data)
@@ -75,16 +69,10 @@ class UserWebInterfaceTestCase(unittest.TestCase):
 
     def tearDown(self):
         tear_down_test_app()
-    
+
     def setUp(self):
         self.app = make_test_app()
-
-        form_content = {'name': 'fixture', 
-                        'full_name': 'Fixture',
-                        'email': 'fixture@datahub.net',
-                        'password': 'password',
-                        'password_confirm': 'password'}
-        self.app.post('/register', data=form_content)
+        create_fixture_user(self.app)
 
     def test_register_user(self):
         form_content = {'name': 'test_user', 

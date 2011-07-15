@@ -1,4 +1,17 @@
 
+Near-Term TODO:
+  * Authoriztaion support
+  * Search indexing
+  * JS Quick Add buttons
+  * Dataset edit
+  * Resource edit
+  * E-Mail confirmation
+  * Password reset
+  * EventStream Subscriptions
+  * Actions menu 
+
+
+
 * Resources
   * File Upload
 * Datasets 

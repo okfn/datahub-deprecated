@@ -12,6 +12,7 @@ RESOURCE_FIXTURE = {'name': 'my-file',
                     'summary': 'A very neat resource!'}
 
 from util import make_test_app, tear_down_test_app
+from util import create_fixture_user
 
 class ResourceTestCase(unittest.TestCase):
 
@@ -23,23 +24,18 @@ class ResourceTestCase(unittest.TestCase):
         tear_down_test_app()
 
     def make_fixtures(self):
-        # TODO: call logic layer instead, once there is one:
-        user = model.User('fixtures', 'Mr. Fixture', 'fix@ture.org',
-                          'secret')
-        core.db.session.add(user)
-        core.db.session.commit()
-
-        self.app.post('/api/v1/resource/fixtures', data=RESOURCE_FIXTURE)
+        create_fixture_user(self.app)
+        self.app.post('/api/v1/resource/fixture', data=RESOURCE_FIXTURE)
 
     def test_user_resource_index(self):
-        res = self.app.get('/api/v1/resource/fixtures')
+        res = self.app.get('/api/v1/resource/fixture')
         body = json.loads(res.data)
         assert len(body)==1, body
 
     def test_user_resource_create_as_json(self):
         data = json.dumps({'name': 'world', 'url': 'http://foos.com', 
                            'summary': 'A foo'})
-        res = self.app.post('/api/v1/resource/fixtures', data=data, 
+        res = self.app.post('/api/v1/resource/fixture', data=data, 
                 headers={'Accept': JSON}, content_type=JSON,
                 follow_redirects=True)
         body = json.loads(res.data)
@@ -48,7 +44,7 @@ class ResourceTestCase(unittest.TestCase):
     def test_user_resource_create_as_form_data(self):
         data = {'name': 'world', 'url': 'http://foos.com', 
                 'summary': 'A foo'}
-        res = self.app.post('/api/v1/resource/fixtures', data=data, 
+        res = self.app.post('/api/v1/resource/fixture', data=data, 
                 headers={'Accept': JSON}, follow_redirects=True)
         body = json.loads(res.data)
         assert isinstance(body, dict)
@@ -63,19 +59,19 @@ class ResourceTestCase(unittest.TestCase):
     #    assert 'A foo' in res.data, res.data
 
     def test_resource_get(self):
-        res = self.app.get('/api/v1/resource/fixtures/my-file')
+        res = self.app.get('/api/v1/resource/fixture/my-file')
         body = json.loads(res.data)
         assert body['name']=='my-file', body
         assert 'created_at' in body, body
         assert 'updated_at' in body, body
     
     def test_nonexistent_resource_get(self):
-        res = self.app.get('/api/v1/resource/fixtures/no-such-file')
+        res = self.app.get('/api/v1/resource/fixture/no-such-file')
         assert res.status.startswith("404"), res.status
         assert 'HTML' in res.data, res.data 
 
     def test_nonexistent_resource_get_as_json(self):
-        res = self.app.get('/api/v1/resource/fixtures/no-such-file',
+        res = self.app.get('/api/v1/resource/fixture/no-such-file',
                 headers={'Accept': JSON})
         assert res.status.startswith("404"), res.status
         body = json.loads(res.data)
@@ -84,30 +80,30 @@ class ResourceTestCase(unittest.TestCase):
     def test_resource_update(self):
         data = RESOURCE_FIXTURE.copy() 
         data['name'] = 'thy-file'
-        res = self.app.put('/api/v1/resource/fixtures/no-file',
+        res = self.app.put('/api/v1/resource/fixture/no-file',
                            data=data)
         assert res.status.startswith("404"), res.data
         
-        res = self.app.put('/api/v1/resource/fixtures/my-file',
+        res = self.app.put('/api/v1/resource/fixture/my-file',
                            data=data)
-        res = self.app.get('/api/v1/resource/fixtures/thy-file')
+        res = self.app.get('/api/v1/resource/fixture/thy-file')
         body = json.loads(res.data)
         assert body['name']=='thy-file', body
 
     def test_resource_delete(self):
-        res = self.app.delete('/api/v1/resource/fixtures/no-file')
+        res = self.app.delete('/api/v1/resource/fixture/no-file')
         assert res.status.startswith("404"), res.data
         
-        res = self.app.delete('/api/v1/resource/fixtures/my-file')
+        res = self.app.delete('/api/v1/resource/fixture/my-file')
         assert res.status.startswith("410"), res.data
 
-        res = self.app.get('/api/v1/resource/fixtures/my-file')
+        res = self.app.get('/api/v1/resource/fixture/my-file')
         assert res.status.startswith("404"), res.data
 
     def test_create_invalid_data(self):
         data = RESOURCE_FIXTURE.copy() 
         data['name'] = 'invalid name'
-        res = self.app.post('/api/v1/resource/fixtures', data=data, 
+        res = self.app.post('/api/v1/resource/fixture', data=data, 
                             headers={'Accept': JSON})
         assert res.status.startswith("400"), res
         data = json.loads(res.data)
@@ -115,7 +111,7 @@ class ResourceTestCase(unittest.TestCase):
 
         data = RESOURCE_FIXTURE.copy() 
         data['url'] = 'not really a url'
-        res = self.app.post('/api/v1/resource/fixtures', data=data, 
+        res = self.app.post('/api/v1/resource/fixture', data=data, 
                             headers={'Accept': JSON})
         assert res.status.startswith("400"), res
         data = json.loads(res.data)
@@ -125,7 +121,7 @@ class ResourceTestCase(unittest.TestCase):
         data = RESOURCE_FIXTURE.copy()
         data['name'] = 'foo'
         data['url'] = ''
-        res = self.app.post('/api/v1/resource/fixtures', data=data, 
+        res = self.app.post('/api/v1/resource/fixture', data=data, 
                             headers={'Accept': JSON})
         assert res.status.startswith("400"), res
         data = json.loads(res.data)
@@ -133,14 +129,14 @@ class ResourceTestCase(unittest.TestCase):
 
         data = RESOURCE_FIXTURE.copy() 
         data['name'] = ''
-        res = self.app.post('/api/v1/resource/fixtures', data=data, 
+        res = self.app.post('/api/v1/resource/fixture', data=data, 
                             headers={'Accept': JSON})
         assert res.status.startswith("400"), res
         data = json.loads(res.data)
         assert 'name' in data['errors'], data
 
     def test_create_existing_name(self):
-        res = self.app.post('/api/v1/resource/fixtures', 
+        res = self.app.post('/api/v1/resource/fixture', 
                             data=RESOURCE_FIXTURE, 
                             headers={'Accept': JSON})
         assert res.status.startswith("400"), res
@@ -148,7 +144,7 @@ class ResourceTestCase(unittest.TestCase):
         assert 'name' in data['errors'], data
 
     def test_wui_resource_get(self):
-        res = self.app.get('/fixtures/my-file')
+        res = self.app.get('/fixture/my-file')
         assert res.status.startswith("200"), res.status
         assert 'A very neat resource' in res.data, res.data
 
