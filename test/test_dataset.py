@@ -209,10 +209,10 @@ class DatasetTestCase(unittest.TestCase):
         body = json.loads(res.data)
         assert len(body)==0, body
 
-    #def test_wui_dataset_get(self):
-    #    res = self.app.get('/fixtures/world')
-    #    assert res.status.startswith("200"), res.status
-    #    assert 'A very neat dataset' in res.data, res.data
+    def test_wui_dataset_get(self):
+        res = self.app.get('/fixture/world')
+        assert res.status.startswith("200"), res.status
+        assert 'A list of everything' in res.data, res.data
 
 
 
