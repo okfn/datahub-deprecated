@@ -1,4 +1,5 @@
 from datetime import datetime
+from dateutil import tz
 import json
 
 from werkzeug.exceptions import NotFound
@@ -11,6 +12,11 @@ MIME_TYPES = {
         'application/json': 'json',
         'text/javascript': 'json',
         }
+
+def datetime_add_tz(dt):
+    """ Solr requires time zone information on all dates. """
+    return datetime(dt.year, dt.month, dt.day, dt.hour,
+                    dt.minute, dt.second, tzinfo=tz.tzutc())
 
 def request_format(request):
     """ 

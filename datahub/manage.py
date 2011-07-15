@@ -14,16 +14,11 @@ def createdb():
     db.create_all()
     resetsearch()
 
-
 @manager.command
 def resetsearch():
     """ Reset the elatic search index (without rebuilding). """
-    from datahub.logic.search import index_name, connection
-    conn = connection()
-    try:
-        conn.delete_index(index_name())
-    except: pass
-    conn.create_index(index_name())
+    from datahub.logic.search import reset_index
+    reset_index()
 
 @manager.command
 def rebuildsearch():

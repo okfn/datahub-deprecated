@@ -7,7 +7,7 @@ SITE_NAME = 'DataHub'
 BROKER_TRANSPORT = "sqlakombu.transport.Transport"
 CELERY_BACKEND = "database" 
 
-ELASTIC_SEARCH_URL = ['127.0.0.1:9200']
+SOLR_URL = 'http://127.0.0.1:8983/solr/datahub'
 
 SQLALCHEMY_DATABASE_URI = 'sqlite:///datahub.db'
 BROKER_HOST = SQLALCHEMY_DATABASE_URI
