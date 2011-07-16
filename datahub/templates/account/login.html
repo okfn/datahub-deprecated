@@ -1,3 +1,4 @@
+{% from "account/parts.html" import login_form %}
 {% extends "layout.html" %}
 
 {% block title %}
@@ -16,20 +17,7 @@
   </div>
   <div class="mainbar">
     <div class="box">
-      <h2>Login</h2>
-      <form method="POST">
-        <dl>
-          <dt><label for="login">Login</label></dt>
-          <dd><input name="login" value="" /></dd>
-        </dl>
-        <dl>
-          <dt><label for="password">Password</label></dt>
-          <dd><input type="password" name="password" value="" /></dd>
-        </dl>
-        <dl>
-          <dd><input type="submit" value="Login" /></dd>
-        </dl>
-      </form>
+      {{ login_form() }}
     </div>
   </div>
 {% endblock %}

@@ -1,5 +1,5 @@
 from flask import request, render_template, redirect
-from flask import url_for, flash
+from flask import url_for, flash, get_template_attribute
 from werkzeug.contrib.atom import AtomFeed
 from formencode import Invalid, htmlfill
 
@@ -135,6 +135,11 @@ def profile_save():
         page = profile()
         return htmlfill.render(page, defaults=data, 
                 errors=inv.unpack_errors())
+
+@app.route('/login.modal', methods=['GET'])
+def login_modal():
+    modal = get_template_attribute('account/parts.html', 'login_modal')
+    return modal()
 
 @app.route('/login', methods=['GET'])
 def login():

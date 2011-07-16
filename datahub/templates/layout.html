@@ -20,13 +20,23 @@
   {% block head %} {% endblock %}
 </head>
 <body>
+  <!--div class="modal-overlay">
+    <div class="modal-container">
+      <div class="modal-close">
+        <img src="/static/img/icons/x2.png">
+      </div>
+      <div class="modal-data">
+        huhu
+      </div>
+    </div>
+  </div-->
   <div id="container" class="container">
     <header>
       <div class="site">
         <div class="account-menu">
           {% if current_user.is_anonymous() %}
-            <a href="{{ url_for('login') }}">Login</a>
-            <a href="{{ url_for('register') }}">Register</a>
+            <a class="login_modal" href="{{ url_for('login') }}">Login</a>
+            <a class="login_modal" href="{{ url_for('register') }}">Register</a>
           {% else %}
             <a href="{{ url_for('account', account=current_user.name) }}">{{
               current_user.full_name }}</a>
@@ -70,7 +80,19 @@
 
 
   <!-- scripts concatenated and minified via ant build script-->
+  <script src="/static/js/modal.js"></script>
   <script src="/static/js/script.js"></script>
+
+  <script>
+    $(document).ready(function() {
+      $(".login_modal").click(function(e) {
+        e.preventDefault();
+        $.get('/login.modal', function(pg) {
+          $.modal(pg);
+        });
+      });
+    }); 
+  </script>
   <!-- end scripts-->
 
   <!--[if lt IE 7 ]>

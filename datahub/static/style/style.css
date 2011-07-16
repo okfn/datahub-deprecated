@@ -220,6 +220,65 @@ footer .site {
   padding: 0em 1em 1em 1em;
 }
 
+
+.modal-overlay {
+  position: absolute;
+  top: 0; left: 0;
+}
+
+.modal-container {
+  display: none;
+  position: fixed;
+  padding: 0.7em;
+  width: 700px;
+  height: auto;
+  border-radius: 10px;
+  opacity: 1;
+  background-color: rgba(82, 82, 82, 0.7);
+     -moz-box-shadow: 0px 0px 30px #cccccc; 
+  -webkit-box-shadow: 0px 0px 30px #cccccc; 
+          box-shadow: 0px 0px 30px #cccccc; 
+}
+
+.modal-close {
+  position: absolute;
+  right: 0;
+  top: 0;
+  margin-right: -16px;
+  margin-top: -6px;
+  cursor: pointer;
+  background: url(/static/img/icons/x.png) no-repeat;
+  width: 32px;
+  height: 32px;
+}
+
+.modal-close a {
+}
+
+.modal-wrap {
+  height: auto;
+}
+
+.modal-data {
+  display: none;
+  border: 1px solid #666;
+  background-color: #fff;
+  padding: 1em;
+  height: auto;
+}
+
+.modal-data .leftbar {
+  width: 315px;
+  margin-right: 10px;
+}
+
+.modal-data .rightbar {
+  width: 315px;
+  float: right;
+  margin-right: 1em;
+}
+
+
 #main {
   margin: 2em auto;
 }

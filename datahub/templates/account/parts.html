@@ -1,5 +1,68 @@
+
 {% macro account_heading(account) %}
   <h1><img src="{{ account.email | gravatar(size=32) }}" /> 
     <strong>{{ account.name }}</strong> ({{ account.full_name}})</h1>
+{% endmacro %}
+
+{% macro login_form() %}
+  <h2>Login</h2>
+  <form action="{{ url_for('login_save') }}" method="POST">
+    <dl>
+      <dt><label for="login">Login</label></dt>
+      <dd><input name="login" value="" /></dd>
+    </dl>
+    <dl>
+      <dt><label for="password">Password</label></dt>
+      <dd><input type="password" name="password" value="" /></dd>
+    </dl>
+    <dl>
+      <dd><input type="submit" value="Login" /></dd>
+    </dl>
+  </form>
+{% endmacro %}
+
+{% macro register_form() %}
+  <h2>Register</h2>
+  <form action="{{ url_for('register_save') }}" method="POST">
+    <dl>
+      <dt>
+        <label for="name">Login name</label>
+        <p>
+          This name will become part of the link for any resources 
+          and datasets that you create.
+        </p>
+      </dt>
+      <dd><input name="name" value="" /></dd>
+    </dl>
+    <dl>
+      <dt><label for="full_name">Full name</label></dt>
+      <dd><input name="full_name" value="" /></dd>
+    </dl>
+    <dl>
+      <dt><label for="email">E-Mail</label></dt>
+      <dd><input name="email" value="" /></dd>
+    </dl>
+    <dl>
+      <dt><label for="password">Password</label></dt>
+      <dd><input type="password" name="password" value="" /></dd>
+    </dl>
+    <dl>
+      <dt><label for="password_confirm">Password (confirm)</label></dt>
+      <dd><input type="password" name="password_confirm" value="" /></dd>
+    </dl>
+    <dl>
+      <dd><input type="submit" value="Register" /></dd>
+    </dl>
+  </form>
+{% endmacro %}
+
+{% macro login_modal() %}
+  <div class="rightbar">
+    {{ login_form() }}
+  </div>
+  <div class="leftbar">
+    {{ register_form() }}
+  </div>
+  <div class="clearfix"></div>
 {% endmacro %}
 
