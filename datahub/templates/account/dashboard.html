@@ -18,7 +18,7 @@
       <ul class="node-minilist">
         {% for dataset in datasets %}
           <li>
-            <a href="{{ url_for('node', owner=current_user.name, node=dataset.name) }}">
+            <a href="{{ url_for('node', owner=dataset.owner.name, node=dataset.name) }}">
               {{ dataset.name }}
             </a>
           </li>
@@ -34,7 +34,7 @@
       <ul class="node-minilist">
         {% for resource in resources %}
           <li>
-            <a href="{{ url_for('node', owner=current_user.name, node=resource.name) }}">
+            <a href="{{ url_for('node', owner=resource.owner.name, node=resource.name) }}">
               {{ resource.name }}
             </a>
           </li>

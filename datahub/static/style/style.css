@@ -372,6 +372,11 @@ form input {
   width: 98%;
 }
 
+form input[type=checkbox],
+form input[type=radio] {
+  width: auto;
+}
+
 /* cupid green (inspired by okcupid.com)
  * from https://github.com/ubuwaits/css3-buttons/blob/gh-pages/css/buttons.css
 *******************************************************************************/
@@ -469,6 +474,10 @@ form input[type=submit]:active {
 
 .node-minilist a {
   font-weight: bold;
+}
+
+.node-minilist input {
+  margin-bottom: 1px;
 }
 
 /* Event listings */
