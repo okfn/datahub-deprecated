@@ -534,9 +534,15 @@ form input[type=submit]:active {
   float: left; 
 }
 
+/* Table */
+.property-list th {
+  text-align: left;
+}
 
-
-
+.property-list th,
+.property-list td {
+  padding: 0.5em 1em 0 0;
+}
 
 /** More Boilerplate 
  *

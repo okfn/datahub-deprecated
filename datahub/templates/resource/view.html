@@ -18,13 +18,37 @@
     <a href="{{ url_for('account', account=resource.owner.name) }}">{{ resource.owner.name }}</a>
     / <strong>{{ resource.name }}</strong></h1>
   <div class="sidebar">
-    <div class="box">
-      {{ request.url }}
+    <div class="nobox">
+      <h3>
+        {% if can.dataset.create(current_user) %}
+          <a class="action create_modal" href="#">
+            <img src="/static/img/icons/create.png" alt="Create a resource or dataset" />
+          </a>
+        {% endif %}
+        Datasets</h3>
+      <ul class="node-minilist">
+        {% for dataset in resource.datasets %}
+          <li>
+            <a href="{{ url_for('node', owner=dataset.owner.name, node=dataset.name) }}">
+              {{ dataset.name }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
     </div>
   </div>
   <div class="mainbar">
     <div class="box">
-      {{ resource.summary }}
+      <table class="property-list">
+        <tr>
+          <th>URL:</th>
+          <td><a href="{{ resource.url }}">{{ resource.url }}</a></td>
+        </tr>
+        <tr>
+          <th>Summary:</th>
+          <td>{{ resource.summary }}</td>
+        </tr>
+      </table>
     </div>
   </div>
 {% endblock %}
