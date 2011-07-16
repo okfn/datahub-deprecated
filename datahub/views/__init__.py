@@ -97,6 +97,16 @@ def dataset_create():
 def dataset_create_form():
     return render_template('dataset/create.html')
 
+@app.route('/add_resources.modal')
+def add_resources_modal():
+    dataset = logic.dataset.find(request.args['owner'],
+                                 request.args['name'])
+    require.dataset.add_resource(dataset)
+    resources = logic.resource.list_by_owner(current_user.name)
+    modal = get_template_attribute('resource/parts.html', 
+                                   'add_resources_modal')
+    return modal(dataset, resources)
+
 @app.route('/create.modal')
 def create_modal():
     require.logged_in()

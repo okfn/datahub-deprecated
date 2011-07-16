@@ -15,13 +15,40 @@
   {{ dataset.owner.name }} / {{ dataset.name }}
 {% endblock %}
 
+{% block script %}
+  <script>
+    $(document).ready(function() {
+      var ds_owner = '{{ dataset.owner.name }}';
+      var ds_name = '{{ dataset.name }}';
+
+      toggleResource = function(cur, owner, name) {
+        if ($(cur).is(':checked')) {
+          $.post('/api/v1/dataset/' + ds_owner + '/' + ds_name + '/resources', 
+            {'owner': owner, 'name': name});
+        } else {
+          $.ajax({url: '/api/v1/dataset/' + ds_owner + '/' + ds_name + '/resources/' + owner + '/' + name,
+                  type: 'DELETE'});
+        }
+      }
+      $(".add_resources_modal").click(function(e) {
+        e.preventDefault();
+        $.get('/add_resources.modal', {'owner': ds_owner,
+          'name': ds_name}, function(pg) {
+          $.modal(pg, {
+            onClose: function() { location.reload(); }
+            });
+        });
+      });
+    }); 
+  </script>
+{% endblock %}
+
 {% block content %}
   <h1><img src="{{ dataset.owner.email | gravatar(size=32) }}" /> 
     <a href="{{ url_for('account', account=dataset.owner.name) }}">{{ dataset.owner.name }}</a>
     / <strong>{{ dataset.name }}</strong></h1>
   <div class="sidebar">
     <div class="nobox">
-      {{ resource_create_form(current_user, dataset=dataset) }}
     </div>
   </div>
   <div class="mainbar">
@@ -29,6 +56,14 @@
       {{ dataset.summary }}
 
       <hr/>
+      <h3>
+        {% if can.dataset.add_resource(dataset) %}
+          <a class="action add_resources_modal" href="#">
+            <img src="/static/img/icons/create.png" alt="Add resources to this dataset" />
+          </a>
+        {% endif %}
+        Resources
+      </h3>
 
       {% for resource in dataset.resources %}
         {{ resource_mainbar_list_item(resource) }}
