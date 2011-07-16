@@ -1,7 +1,11 @@
 
-{% macro create_form(user) %}
+{% macro create_form(user, resource=None) %}
   <form action="{{ url_for('dataset_create') }}" 
     method="POST" class="dataset-create">
+    {% if resource %}
+      <input name="resource.name" value="{{ resource.name }}" type="hidden" />
+      <input name="resource.owner" value="{{ resource.owner.name }}" type="hidden" />
+    {% endif %}
     <h3>Create a dataset</h3>
     <p>
       Datasets are collections of resources that share a common topic

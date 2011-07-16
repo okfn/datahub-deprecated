@@ -62,13 +62,25 @@ class ResourceTestCase(unittest.TestCase):
                 follow_redirects=True)
         assert res.status.startswith("403"), res.status
     
-    #def test_user_resource_create_in_wui(self):
-    #    data = {'name': 'world', 'url': 'http://foos.com', 
-    #            'summary': 'A foo'}
-    #    res = self.app.post('/resource', data=data, 
-    #            follow_redirects=True, 
-    #            environ_base={'REMOTE_USER': 'fixtures'})
-    #    assert 'A foo' in res.data, res.data
+    def test_user_resource_create_in_wui(self):
+        data = {'name': 'world', 'url': 'http://foos.com', 
+                'summary': 'A foo'}
+        res = self.app.post('/resource', data=data, 
+                headers={'Authorization': AUTHZ},
+                follow_redirects=True)
+        assert 'A foo' in res.data, res.data
+    
+    def test_user_resource_create_in_wui_with_dataset(self):
+        from test_dataset import DATASET_FIXTURE
+        self.app.post('/api/v1/dataset/fixture', 
+                headers={'Authorization': AUTHZ},
+                data=DATASET_FIXTURE)
+        data = {'name': 'world2', 'url': 'http://foos.com', 
+                'summary': 'A foo', 'dataset.owner': 'fixture', 
+                'dataset.name': DATASET_FIXTURE['name']}
+        res = self.app.post('/resource', data=data, 
+                headers={'Authorization': AUTHZ})
+        assert 'fixture/world' in res.headers.get('Location'), res.headers
 
     def test_resource_get(self):
         res = self.app.get('/api/v1/resource/fixture/my-file')

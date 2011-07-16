@@ -43,10 +43,10 @@ def create(owner_name, data):
     require.resource.create(owner)
 
     state = NodeSchemaState(owner_name, None)
-    data = ResourceSchema().to_python(data, state=state)
+    data_ = ResourceSchema().to_python(data, state=state)
 
-    resource = Resource(owner, data['name'], data['url'],
-                        data['summary'], data['meta'])
+    resource = Resource(owner, data_['name'], data_['url'],
+                        data_['summary'], data_['meta'])
     db.session.add(resource)
     db.session.flush()
     index_add(resource)
@@ -54,6 +54,12 @@ def create(owner_name, data):
     event_ = ResourceCreatedEvent(current_user, resource)
     event.emit(event_, [resource])
 
+    if 'dataset' in data:
+        from datahub.logic.dataset import add_resource
+        reference = {'owner': owner_name, 'name': resource.name}
+        add_resource(data['dataset']['owner'],
+                     data['dataset']['name'],
+                     reference, in_tx=True)
     db.session.commit()
     return resource
 

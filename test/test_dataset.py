@@ -139,7 +139,7 @@ class DatasetTestCase(unittest.TestCase):
         assert res.status.startswith("400"), res
         data = json.loads(res.data)
         assert 'name' in data['errors'], data
-    
+
     def test_create_with_meta(self):
         data = DATASET_FIXTURE.copy() 
         data['name'] = 'meta-world'
@@ -236,10 +236,28 @@ class DatasetTestCase(unittest.TestCase):
         body = json.loads(res.data)
         assert len(body)==0, body
 
+    def test_user_resource_create_in_wui(self):
+        data = {'name': 'mars', 'summary': 'A foo'}
+        res = self.app.post('/dataset', data=data, 
+                headers={'Authorization': AUTHZ},
+                follow_redirects=True)
+        assert 'A foo' in res.data, res.data
+
+    def test_user_dataset_create_in_wui_with_resource(self):
+        self.app.post('/api/v1/resource/fixture', 
+                headers={'Authorization': AUTHZ},
+                data=RESOURCE_FIXTURE)
+        data = {'name': 'mars',
+                'summary': 'A foo', 'resource.owner': 'fixture', 
+                'resource.name': RESOURCE_FIXTURE['name']}
+        res = self.app.post('/dataset', data=data, 
+                headers={'Authorization': AUTHZ})
+        assert 'fixture/my-file' in res.headers.get('Location'), res.headers
+
     def test_wui_dataset_get(self):
-        res = self.app.get('/fixture/world')
-        assert res.status.startswith("200"), res.status
-        assert 'A list of everything' in res.data, res.data
+            res = self.app.get('/fixture/world')
+            assert res.status.startswith("200"), res.status
+            assert 'A list of everything' in res.data, res.data
 
 
 

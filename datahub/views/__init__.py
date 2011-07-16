@@ -53,6 +53,14 @@ def resource_create():
     data = request_content(request)
     try:
         resource = logic.resource.create(owner, data)
+        if 'dataset' in data:
+            # if we were simultaneously attaching a 
+            # dataset, return there instead.
+            flash('Created %s / %s' % (resource.owner.name, resource.name), 
+                  'success')
+            return redirect(url_for('node', 
+                owner=data['dataset']['owner'], 
+                node=data['dataset']['name']))
         return redirect(url_for('node', owner=owner, 
                                 node=resource.name))
     except Invalid, inv:
@@ -71,6 +79,14 @@ def dataset_create():
     data = request_content(request)
     try:
         dataset = logic.dataset.create(owner, data)
+        if 'resource' in data:
+            # if we were simultaneously attaching a 
+            # resource, return there instead.
+            flash('Created %s / %s' % (dataset.owner.name, dataset.name), 
+                  'success')
+            return redirect(url_for('node', 
+                owner=data['resource']['owner'], 
+                node=data['resource']['name']))
         return redirect(url_for('node', owner=owner, 
                                 node=dataset.name))
     except Invalid, inv:

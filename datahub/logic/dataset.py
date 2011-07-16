@@ -43,16 +43,20 @@ def create(owner_name, data):
     require.dataset.create(owner)
 
     state = NodeSchemaState(owner_name, None)
-    data = DatasetSchema().to_python(data, state=state)
+    data_ = DatasetSchema().to_python(data, state=state)
 
-    dataset = Dataset(owner, data['name'], data['summary'],
-                      data['meta'])
+    dataset = Dataset(owner, data_['name'], data_['summary'],
+                      data_['meta'])
     db.session.add(dataset)
     db.session.flush()
     index_add(dataset)
 
     event_ = DatasetCreatedEvent(current_user, dataset)
     event.emit(event_, [dataset])
+
+    if 'resource' in data:
+        add_resource(dataset.owner.name, dataset.name,
+                     data['resource'], in_tx=True)
 
     db.session.commit()
     return dataset
@@ -81,7 +85,8 @@ def list_resources(owner_name, dataset_name):
     require.dataset.read(dataset)
     return dataset.resources
 
-def add_resource(owner_name, dataset_name, data):
+def add_resource(owner_name, dataset_name, data, 
+        in_tx=False):
     dataset = find(owner_name, dataset_name)
     require.dataset.add_resource(dataset)
 
@@ -94,7 +99,8 @@ def add_resource(owner_name, dataset_name, data):
         event_ = DatasetAddResourceEvent(current_user, 
                         dataset, res)
         event.emit(event_, [dataset, res])
-    db.session.commit()
+    if not in_tx:
+        db.session.commit()
 
 def remove_resource(owner_name, dataset_name, resource_owner,
                     resource_name):

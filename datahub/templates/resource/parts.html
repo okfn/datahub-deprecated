@@ -11,9 +11,13 @@
   </li>
 {% endmacro %}
 
-{% macro create_form(user) %}
+{% macro create_form(user, dataset=None) %}
   <form action="{{ url_for('resource_create') }}" 
     method="POST" class="resource-create">
+    {% if dataset %}
+      <input name="dataset.name" value="{{ dataset.name }}" type="hidden" />
+      <input name="dataset.owner" value="{{ dataset.owner.name }}" type="hidden" />
+    {% endif %}
     <h3>Create a resource</h3>
     <p>
       Resources are references to an individual item like a spreadsheet, 
