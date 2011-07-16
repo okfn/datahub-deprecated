@@ -11,6 +11,10 @@ class Account(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Unicode(255), unique=True)
     full_name = db.Column(db.Unicode(2000))
+    activation_code = db.Column(db.Unicode())
+    reset_code = db.Column(db.Unicode())
+    activated = db.Column(db.Boolean())
+    full_name = db.Column(db.Unicode(2000))
     email = db.Column(db.Unicode(2000))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow,
