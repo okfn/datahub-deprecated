@@ -56,9 +56,12 @@ def resource_create():
         return redirect(url_for('node', owner=owner, 
                                 node=resource.name))
     except Invalid, inv:
-        page = dashboard()
+        page = resource_create_form()
         return htmlfill.render(page, defaults=data, 
                 errors=inv.unpack_errors())
+
+def resource_create_form():
+    return render_template('resource/create.html')
 
 @app.route('/dataset', methods=['POST'])
 def dataset_create():
@@ -71,9 +74,18 @@ def dataset_create():
         return redirect(url_for('node', owner=owner, 
                                 node=dataset.name))
     except Invalid, inv:
-        page = dashboard()
+        page = dataset_create_form()
         return htmlfill.render(page, defaults=data, 
                 errors=inv.unpack_errors())
+
+def dataset_create_form():
+    return render_template('dataset/create.html')
+
+@app.route('/create.modal')
+def create_modal():
+    require.logged_in()
+    modal = get_template_attribute('parts.html', 'create_modal')
+    return modal()
 
 def dashboard():
     require.logged_in()

@@ -1,0 +1,15 @@
+{% from "resource/parts.html" import create_form as resource_create_form %}
+{% from "dataset/parts.html" import create_form as dataset_create_form %}
+
+{% macro create_modal() %}
+  <div class="rightbar">
+    {{ resource_create_form(current_user) }}
+  </div>
+  <div class="leftbar">
+    {{ dataset_create_form(current_user) }}
+  </div>
+  <div class="clearfix"></div>
+{% endmacro %}
+
+
+

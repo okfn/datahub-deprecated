@@ -175,6 +175,10 @@ header .account-menu a {
   padding-left: 1em;
 }
 
+header .account-menu img {
+  margin-bottom: -3px;
+}
+
 header .site-title {
   display: block;
   text-align: bottom;

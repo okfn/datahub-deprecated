@@ -43,6 +43,9 @@
             <a href="{{ url_for('home') }}">Dashboard</a>
             <a href="{{ url_for('profile') }}">Settings</a>
             <a href="{{ url_for('logout') }}">Logout</a>
+            <a class="create_modal" href="#"><img
+              src="/static/img/icons/create.png" alt="Create a resource or
+              dataset" /></a>
           {% endif %}
         </div>
         <span class="site-title">
@@ -88,6 +91,13 @@
       $(".login_modal").click(function(e) {
         e.preventDefault();
         $.get('/login.modal', function(pg) {
+          $.modal(pg);
+        });
+      });
+      
+      $(".create_modal").click(function(e) {
+        e.preventDefault();
+        $.get('/create.modal', function(pg) {
           $.modal(pg);
         });
       });

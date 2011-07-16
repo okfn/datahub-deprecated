@@ -1,0 +1,28 @@
+{% from "dataset/parts.html" import create_form as dataset_create_form %}
+{% extends "layout.html" %}
+
+{% block title %}
+  Create a Dataset
+{% endblock %}
+
+{% block content %}
+  <div class="sidebar">
+    <div class="nobox">  
+      <h2>What is a dataset?</h2>
+      <p>
+        Datasets are collections of resources that are useful for 
+        some purpose: they can either collect resources about a 
+        common topic, or resources that are used for the same 
+        purpose, e.g. loaded into a system together.
+      </p>
+    </div>
+  </div>
+  <div class="mainbar">
+    <div class="box">
+      {{ dataset_create_form(current_user) }}
+    </div>
+  </div>
+{% endblock %}
+
+
+
