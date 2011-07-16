@@ -122,6 +122,14 @@ h2 {
   margin-bottom: 0.8em;
 }
 
+h2 .feed,
+h2 .action,
+h3 .feed, 
+h3 .action {
+  float: right;
+  margin-top: -2px;
+}
+
 .flashes {
   list-style-type: none;
   margin: 0;
@@ -239,9 +247,10 @@ footer .site {
   border-radius: 10px;
   opacity: 1;
   background-color: rgba(82, 82, 82, 0.7);
-     -moz-box-shadow: 0px 0px 30px #cccccc; 
+  /*   -moz-box-shadow: 0px 0px 30px #cccccc; 
   -webkit-box-shadow: 0px 0px 30px #cccccc; 
           box-shadow: 0px 0px 30px #cccccc; 
+  */
 }
 
 .modal-close {
@@ -299,6 +308,7 @@ footer .site {
 
 .nobox {
   padding-top: 1em;
+  text-shadow: 1px 1px 2px #fff;
 }
 
 .mainbar {
@@ -443,6 +453,22 @@ form input[type=submit]:active {
   float: right; 
   margin-right: 5px;
   margin-top: 5px;
+}
+
+.node-minilist {
+  list-style: none;
+  margin: 1em 0 1em 0;
+  border-top: 1px solid #ddd;
+}
+
+.node-minilist li {
+  padding: 0.2em;
+  padding-left: 1em;
+  border-bottom: 1px solid #ddd;
+}
+
+.node-minilist a {
+  font-weight: bold;
 }
 
 /* Event listings */

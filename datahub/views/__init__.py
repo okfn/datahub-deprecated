@@ -89,8 +89,11 @@ def create_modal():
 
 def dashboard():
     require.logged_in()
+    resources = logic.resource.list_by_owner(current_user.name)
+    datasets = logic.dataset.list_by_owner(current_user.name)
     return render_template('account/dashboard.html',
-                account=account)
+                account=account, resources=resources,
+                datasets=datasets)
 
 @app.route('/<account>.atom')
 def account_feed(account):

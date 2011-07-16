@@ -9,15 +9,47 @@
 {% block content %}
   <div class="sidebar">
     <div class="nobox">
-      {{ resource_create_form(current_user) }}
+      <h3>
+        <a class="action create_modal" href="#">
+          <img src="/static/img/icons/create.png" alt="Create a resource or dataset" />
+        </a>
+        Your Datasets</h3>
+      <ul class="node-minilist">
+        {% for dataset in datasets %}
+          <li>
+            <a href="{{ url_for('node', owner=current_user.name, node=dataset.name) }}">
+              {{ dataset.name }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
     </div>
     <div class="nobox">
-      {{ dataset_create_form(current_user) }}
+      <h3>
+        <a class="action create_modal" href="#">
+          <img src="/static/img/icons/create.png" alt="Create a resource or dataset" />
+        </a>
+        Your Resources</h3>
+      <ul class="node-minilist">
+        {% for resource in resources %}
+          <li>
+            <a href="{{ url_for('node', owner=current_user.name, node=resource.name) }}">
+              {{ resource.name }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
     </div>
   </div>
   <div class="mainbar">
     <div class="box">
-      <h2>{{ current_user.name }}'s datastream</h2>
+      <h2>
+        <div class="feed">
+          <a href="{{ url_for('account_feed', account=current_user.name) }}">
+            <img src="/static/img/icons/feed.png" alt="feed" />
+          </a>
+        </div>
+        {{ current_user.name }}</h2>
       Here is where the activity stream will be.
     </div>
   </div>

@@ -20,7 +20,13 @@
   {{ account_heading(account) }}
   <div class="rightbar">
     <div class="box">
-      <h2>Recent Activity</h2>
+      <h2>
+        <div class="feed">
+          <a href="{{ url_for('account_feed', account=account.name) }}">
+            <img src="/static/img/icons/feed.png" alt="feed" />
+          </a>
+        </div>
+        Recent Activity</h2>
       <ul class="events">
         {% for event in events %}
           {{ event_list_item(event) }}
