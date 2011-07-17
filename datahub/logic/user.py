@@ -1,10 +1,13 @@
 from hashlib import sha1
+from uuid import uuid4
 import os
 
+from flask import url_for
 from flaskext.login import login_user, logout_user
 from formencode import Schema, Invalid, validators
 
-from datahub.core import db, login_manager
+from datahub.core import db, login_manager, current_user
+from datahub.exc import BadRequest
 from datahub.auth import require
 from datahub.model import User
 from datahub.model.event import AccountCreatedEvent
@@ -13,7 +16,15 @@ from datahub.model.event import AccountUpdatedEvent
 from datahub.logic import event
 from datahub.logic.search import index_add
 from datahub.logic.account import AccountSchema, AccountSchemaState
-from datahub.logic.account import get as get_account
+from datahub.logic.account import get as get_account, find, send_mail
+
+ACTIVATION_TEMPLATE = '''Dear %(full_name)s,
+
+Please click the activation link to finalize your registration:
+
+    %(url)s
+
+'''
 
 
 class RegistrationSchema(AccountSchema):
@@ -36,6 +47,10 @@ class LoginSchema(Schema):
     """ Simple schema to check login fields are present. """
     login = validators.String()
     password = validators.String()
+
+def make_token():
+    """ Generate a unique token. """
+    return sha1(str(uuid4())).hexdigest()[:10]
 
 def hash_password(password):
     """ Hash password on the fly. """
@@ -82,9 +97,10 @@ def register(data):
     db.session.flush()
     index_add(user)
 
-    # FIXME: use current_user, not owner.
     event_ = AccountCreatedEvent(user)
     event.emit(event_)
+
+    send_activation(user)
 
     db.session.commit()
 
@@ -106,8 +122,7 @@ def update(user, data):
     db.session.add(user)
     index_add(user)
 
-    # FIXME: use current_user, not owner.
-    event_ = AccountUpdatedEvent(user)
+    event_ = AccountUpdatedEvent(current_user)
     event.emit(event_)
 
     db.session.commit()
@@ -124,9 +139,30 @@ def login(data):
     if not validate_password(user.password, data['password']):
         raise Invalid('Password is incorrect', data['password'], None,
                       error_dict={'password': 'Password is incorrect'})
-    login_user(user)
+    if not login_user(user):
+        raise BadRequest('This account is not activated.')
     return user
 
 def logout():
     logout_user()
 
+def activate(account, args):
+    account = find(account)
+    if account.activation_code != args['token']:
+        raise BadRequest('Invalid activation code!')
+    account.activated = True
+    db.session.commit()
+    login_user(account)
+
+def send_activation(account):
+    account.activation_code = make_token()
+    account.activated = False
+    subject = 'Activate your account'
+    body = ACTIVATION_TEMPLATE % {
+            'full_name': account.full_name, 
+            'url': url_for('activate', 
+                account=account.name,
+                token=account.activation_code,
+                _external=True)
+            }
+    send_mail(account, subject, body)

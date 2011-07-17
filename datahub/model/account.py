@@ -45,7 +45,7 @@ class User(Account):
         return False
 
     def is_active(self):
-        return True
+        return self.activated
 
     def get_id(self):
         return self.name

@@ -153,6 +153,12 @@ def account(account):
     return render_template('account/home.html',
                 account=account, events=events)
 
+@app.route('/activate/<account>')
+def activate(account):
+    logic.user.activate(account, request.args)
+    flash('Your account has been activated.', 'success')
+    return redirect(url_for('home'))
+
 @app.route('/register', methods=['GET'])
 def register():
     require.account.create()

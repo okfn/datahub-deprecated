@@ -3,10 +3,10 @@ Near-Term TODO:
   --- * Authoriztaion support
   --- * Metadata support
   --- * Search indexing
-  * JS Quick Add buttons
+  --- * JS Quick Add buttons
   * Dataset edit
   * Resource edit
-  * E-Mail confirmation
+  --- * E-Mail confirmation
   * Password reset
   * EventStream Subscriptions
   * Actions menu 
