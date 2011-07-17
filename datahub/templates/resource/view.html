@@ -13,6 +13,35 @@
   {{ resource.owner.name }} / {{ resource.name }}
 {% endblock %}
 
+{% block script %}
+  <script>
+    $(document).ready(function() {
+      var res_owner = '{{ resource.owner.name }}';
+      var res_name = '{{ resource.name }}';
+
+      toggleDataset = function(cur, owner, name) {
+        if ($(cur).is(':checked')) {
+          $.post('/api/v1/dataset/' + owner + '/' + name + '/resources', 
+            {'owner': res_owner, 'name': res_name});
+        } else {
+          $.ajax({url: '/api/v1/dataset/' + owner + '/' + name + '/resources/'
+            + res_owner + '/' + res_name,
+                  type: 'DELETE'});
+        }
+      }
+      $(".add_datasets_modal").click(function(e) {
+        e.preventDefault();
+        $.get('/add_datasets.modal', {'owner': res_owner,
+          'name': res_name}, function(pg) {
+          $.modal(pg, {
+            onClose: function() { location.reload(); }
+            });
+        });
+      });
+    }); 
+  </script>
+{% endblock %}
+
 {% block content %}
   <h1><img src="{{ resource.owner.email | gravatar(size=32) }}" /> 
     <a href="{{ url_for('account', account=resource.owner.name) }}">{{ resource.owner.name }}</a>
@@ -21,8 +50,8 @@
     <div class="nobox">
       <h3>
         {% if can.dataset.create(current_user) %}
-          <a class="action create_modal" href="#">
-            <img src="/static/img/icons/create.png" alt="Create a resource or dataset" />
+          <a class="action add_datasets_modal" href="#">
+            <img src="/static/img/icons/create.png" alt="Add this resource to a dataset" />
           </a>
         {% endif %}
         Datasets</h3>
@@ -30,7 +59,7 @@
         {% for dataset in resource.datasets %}
           <li>
             <a href="{{ url_for('node', owner=dataset.owner.name, node=dataset.name) }}">
-              {{ dataset.name }}
+              {{ dataset.owner.name }} / {{ dataset.name }}
             </a>
           </li>
         {% endfor %}

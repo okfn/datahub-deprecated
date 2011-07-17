@@ -128,6 +128,7 @@ h3 .feed,
 h3 .action {
   float: right;
   margin-top: -2px;
+  margin-right: 5px;
 }
 
 .flashes {

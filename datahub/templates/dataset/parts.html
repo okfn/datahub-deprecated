@@ -24,3 +24,36 @@
     </dl>
   </form>
 {% endmacro %}
+
+{% macro add_datasets_modal(resource, datasets) %}
+  <div class="rightbar">
+    {{ create_form(current_user, resource=resource) }}
+  </div>
+  <div class="leftbar">
+    <form>
+      <h3>Select existing datasets</h3>
+      <p>
+        Select any datasets that the resource should be a part of. 
+      </p>
+
+    <ul class="node-minilist">
+      {% for dataset in datasets %}
+        <li>
+          {% if dataset in resource.datasets %}
+            <input type="checkbox" checked="checked" 
+              onclick="toggleDataset(this, '{{dataset.owner.name}}', '{{dataset.name}}')">
+          {% else %}
+            <input type="checkbox" 
+              onclick="toggleDataset(this, '{{dataset.owner.name}}', '{{dataset.name}}')">
+          {% endif %}
+          <a href="{{ url_for('node', owner=dataset.owner.name, node=dataset.name) }}">
+            {{ dataset.owner.name }} / {{ dataset.name }}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+    </form>
+  </div>
+  <div class="clearfix"></div>
+{% endmacro %}
+

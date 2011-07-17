@@ -64,7 +64,7 @@
               onclick="toggleResource(this, '{{resource.owner.name}}', '{{resource.name}}')">
           {% endif %}
           <a href="{{ url_for('node', owner=resource.owner.name, node=resource.name) }}">
-            {{ resource.name }}
+            {{ resource.owner.name }} / {{ resource.name }}
           </a>
         </li>
       {% endfor %}
