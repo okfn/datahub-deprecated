@@ -29,7 +29,7 @@
             <a class="login_modal" href="{{ url_for('register') }}">Register</a>
           {% else %}
             <a href="{{ url_for('account', account=current_user.name) }}">{{
-              current_user.full_name }}</a>
+              current_user.name }}</a>
             <a href="{{ url_for('home') }}">Dashboard</a>
             <a href="{{ url_for('profile') }}">Settings</a>
             <a href="{{ url_for('logout') }}">Logout</a>
