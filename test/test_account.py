@@ -122,7 +122,7 @@ class UserWebInterfaceTestCase(unittest.TestCase):
         res = app.post('/login', data=form_content,
                 follow_redirects=True)
         assert res.status.startswith("200"), res
-        assert 'Fixture' in res.data, res
+        assert 'fixture' in res.data, res
 
         form_content = {'login': 'fixture', 
                         'password': 'wrong password'}
@@ -134,7 +134,7 @@ class UserWebInterfaceTestCase(unittest.TestCase):
         res = self.app.get('/', 
                 headers={'Authorization': 'Basic ' + auth})
         assert res.status.startswith("200"), res
-        assert 'Fixture' in res.data, res
+        assert 'fixture' in res.data, res
 
     def test_basic_auth_invalid_credentials(self):
         auth = 'fixture:buzzword'.encode('base64')

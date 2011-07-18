@@ -11,7 +11,7 @@
     // FIXME: Listing of users.
     <ul>
       {% for account in accounts %}
-      <li><a href="{{ url_for('account', account=account.name) }}">{{
+      <li><a href="{{ url_for('account.get', account=account.name) }}">{{
         account.name }}</a></li>
       {% endfor %}
     </ul>

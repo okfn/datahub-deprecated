@@ -3,7 +3,7 @@
   <li class="resource-item">
     <span class="url"><a href="{{ resource.url }}"><img
         src="/static/img/icons/link.png" alt="Download" /></a></span>
-    <span class="name"><a href="{{ url_for('account', account=resource.owner.name)
+    <span class="name"><a href="{{ url_for('account.get', account=resource.owner.name)
         }}">{{ resource.owner.name }}</a> /
     <strong><a href="{{ url_for('node', owner=resource.owner.name, node=resource.name)
         }}">{{ resource.name }}</a></strong></span>

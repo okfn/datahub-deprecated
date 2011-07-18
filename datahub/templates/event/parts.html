@@ -5,7 +5,7 @@
       <img src="{{ event.account.email | gravatar(size=32) }}" />
     </span>
     <span class="title">
-      <a href="{{ url_for('account', account=event.account.name) }}">{{
+      <a href="{{ url_for('account.get', account=event.account.name) }}">{{
         event.account.name }}</a> 
       {{ event | event_title }}
     </span>

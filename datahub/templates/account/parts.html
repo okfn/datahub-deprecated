@@ -6,7 +6,7 @@
 
 {% macro login_form() %}
   <h2>Login</h2>
-  <form action="{{ url_for('login_save') }}" method="POST">
+  <form action="{{ url_for('account.login_save') }}" method="POST">
     <dl>
       <dt><label for="login">Login</label></dt>
       <dd><input name="login" value="" /></dd>
@@ -23,7 +23,7 @@
 
 {% macro register_form() %}
   <h2>Register</h2>
-  <form action="{{ url_for('register_save') }}" method="POST">
+  <form action="{{ url_for('account.register_save') }}" method="POST">
     <dl>
       <dt>
         <label for="name">Login name</label>

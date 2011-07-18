@@ -20,7 +20,7 @@
           <li>
             <a href="{{ url_for('node', owner=dataset.owner.name, node=dataset.name) }}">
               {{ dataset.name }}
-            </a>
+            </a> ({{ dataset.resources | length }})
           </li>
         {% endfor %}
       </ul>
@@ -46,7 +46,7 @@
     <div class="box">
       <h2>
         <div class="feed">
-          <a href="{{ url_for('account_feed', account=current_user.name) }}">
+          <a href="{{ url_for('account.feed', account=current_user.name) }}">
             <img src="/static/img/icons/feed.png" alt="feed" />
           </a>
         </div>

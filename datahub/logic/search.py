@@ -6,7 +6,9 @@ from datahub.core import app
 from datahub.util import datetime_add_tz
 
 def connection():
-    return SolrConnection(app.config['SOLR_URL'])
+    return SolrConnection(app.config['SOLR_URL'], 
+                          http_user=app.config.get('SOLR_USER'),
+                          http_pass=app.config.get('SOLR_PASSWORD'))
 
 def to_key(entity):
     return 'datahub/%s//%s' % (entity.__tablename__, entity.id)

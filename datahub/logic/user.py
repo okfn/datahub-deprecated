@@ -160,7 +160,7 @@ def send_activation(account):
     subject = 'Activate your account'
     body = ACTIVATION_TEMPLATE % {
             'full_name': account.full_name, 
-            'url': url_for('activate', 
+            'url': url_for('account.activate', 
                 account=account.name,
                 token=account.activation_code,
                 _external=True)

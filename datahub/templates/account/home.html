@@ -7,7 +7,7 @@
 
 {% block head %}
   <link rel="alternate" type="application/atom+xml" 
-    href="{{ url_for('account_feed', account=account.name) }}">
+    href="{{ url_for('account.feed', account=account.name) }}">
   <link rel="alternate" type="application/json" 
     href="{{ url_for('account_api.get', account=account.name) }}">
 {% endblock %}
@@ -22,7 +22,7 @@
     <div class="box">
       <h2>
         <div class="feed">
-          <a href="{{ url_for('account_feed', account=account.name) }}">
+          <a href="{{ url_for('account.feed', account=account.name) }}">
             <img src="/static/img/icons/feed.png" alt="feed" />
           </a>
         </div>

@@ -13,6 +13,11 @@ AUTHZ = 'Basic ' + AUTHZ.encode('base64')
 
 def create_fixture_user(app):
     app.post('/register', data=FIXTURE_USER)
+    from datahub import logic 
+    account = logic.account.get('fixture')
+    account.activated = True
+    core.db.session.commit()
+
 
 def make_test_app(use_cookies=False):
     web.app.config['TESTING'] = True

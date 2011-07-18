@@ -25,14 +25,14 @@
       <div class="site">
         <div class="account-menu">
           {% if current_user.is_anonymous() %}
-            <a class="login_modal" href="{{ url_for('login') }}">Login</a>
-            <a class="login_modal" href="{{ url_for('register') }}">Register</a>
+            <a class="login_modal" href="{{ url_for('account.login') }}">Login</a>
+            <a class="login_modal" href="{{ url_for('account.register') }}">Register</a>
           {% else %}
-            <a href="{{ url_for('account', account=current_user.name) }}">{{
+            <a href="{{ url_for('account.get', account=current_user.name) }}">{{
               current_user.name }}</a>
             <a href="{{ url_for('home') }}">Dashboard</a>
-            <a href="{{ url_for('profile') }}">Settings</a>
-            <a href="{{ url_for('logout') }}">Logout</a>
+            <a href="{{ url_for('account.profile') }}">Settings</a>
+            <a href="{{ url_for('account.logout') }}">Logout</a>
             <a class="create_modal" href="#"><img
               src="/static/img/icons/create.png" alt="Create a resource or
               dataset" /></a>

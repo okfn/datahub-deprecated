@@ -45,7 +45,7 @@
 
 {% block content %}
   <h1><img src="{{ dataset.owner.email | gravatar(size=32) }}" /> 
-    <a href="{{ url_for('account', account=dataset.owner.name) }}">{{ dataset.owner.name }}</a>
+    <a href="{{ url_for('account.get', account=dataset.owner.name) }}">{{ dataset.owner.name }}</a>
     / <strong>{{ dataset.name }}</strong></h1>
   <div class="sidebar">
     <div class="nobox">

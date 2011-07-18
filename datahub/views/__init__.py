@@ -13,6 +13,7 @@ from datahub.util import request_content
 from datahub.views.resource_api import api as resource_api
 from datahub.views.dataset_api import api as dataset_api
 from datahub.views.account_api import api as account_api
+from datahub.views.account import blueprint as account
 from datahub.views.event_api import event_api, stream_api
 
 app.register_blueprint(resource_api, url_prefix='/api/v1/resource')
@@ -20,6 +21,7 @@ app.register_blueprint(dataset_api, url_prefix='/api/v1/dataset')
 app.register_blueprint(account_api, url_prefix='/api/v1/account')
 app.register_blueprint(event_api, url_prefix='/api/v1/event')
 app.register_blueprint(stream_api, url_prefix='/api/v1/stream')
+app.register_blueprint(account)
 
 @app.route('/<owner>/<node>')
 def node(owner, node):
@@ -128,99 +130,8 @@ def dashboard():
     resources = logic.resource.list_by_owner(current_user.name)
     datasets = logic.dataset.list_by_owner(current_user.name)
     return render_template('account/dashboard.html',
-                account=account, resources=resources,
+                resources=resources,
                 datasets=datasets)
-
-@app.route('/<account>.atom')
-def account_feed(account):
-    account = logic.account.find(account)
-    events = logic.event.latest_by_entity(account)
-    events.limit(40)
-    entries = map(logic.event.event_to_entry, events)
-    feed = AtomFeed(title=account.name,
-                    id='urn:datahub:%s' % account.name,
-                    url=url_for('account', account=account.name),
-                    subtitle=account.full_name,
-                    entries=entries)
-    return feed.get_response()
-
-@app.route('/<account>')
-def account(account):
-    account = logic.account.find(account)
-    events = logic.event.latest_by_entity(account)
-    events = Pager(events, 'account', request.args, limit=50,
-                   account=account.name)
-    return render_template('account/home.html',
-                account=account, events=events)
-
-@app.route('/activate/<account>')
-def activate(account):
-    logic.user.activate(account, request.args)
-    flash('Your account has been activated.', 'success')
-    return redirect(url_for('home'))
-
-@app.route('/register', methods=['GET'])
-def register():
-    require.account.create()
-    return render_template('account/register.html')
-
-@app.route('/register', methods=['POST'])
-def register_save():
-    data = request_content(request)
-    try:
-        logic.user.register(data)
-        return redirect(url_for('home'))
-    except Invalid, inv:
-        page = register()
-        return htmlfill.render(page, defaults=data, 
-                errors=inv.unpack_errors())
-
-@app.route('/profile', methods=['GET'])
-def profile():
-    require.account.update(current_user)
-    return render_template('account/profile.html',
-                           user=current_user)
-
-@app.route('/profile', methods=['POST'])
-def profile_save():
-    data = request_content(request)
-    try:
-        logic.user.update(current_user, data)
-        flash('Your profile has been updated.', 'success')
-        return profile()
-    except Invalid, inv:
-        page = profile()
-        return htmlfill.render(page, defaults=data, 
-                errors=inv.unpack_errors())
-
-@app.route('/login.modal', methods=['GET'])
-def login_modal():
-    modal = get_template_attribute('account/parts.html', 'login_modal')
-    return modal()
-
-@app.route('/login', methods=['GET'])
-def login():
-    return render_template('account/login.html')
-login_manager.login_view = "login"
-
-@app.route('/login', methods=['POST'])
-def login_save():
-    data = request_content(request)
-    try:
-        logic.user.login(data)
-        flash('Welcome back.', 'success')
-        return redirect(url_for('home'))
-    except Invalid, inv:
-        page = login()
-        return htmlfill.render(page, defaults=data, 
-                errors=inv.unpack_errors())
-
-@app.route("/logout")
-def logout():
-    require.logged_in()
-    logic.user.logout()
-    flash('You have been logged out.', 'success')
-    return redirect(url_for('home'))
 
 @app.route('/')
 def home():

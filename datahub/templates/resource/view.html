@@ -44,7 +44,7 @@
 
 {% block content %}
   <h1><img src="{{ resource.owner.email | gravatar(size=32) }}" /> 
-    <a href="{{ url_for('account', account=resource.owner.name) }}">{{ resource.owner.name }}</a>
+    <a href="{{ url_for('account.get', account=resource.owner.name) }}">{{ resource.owner.name }}</a>
     / <strong>{{ resource.name }}</strong></h1>
   <div class="sidebar">
     <div class="nobox">
@@ -60,7 +60,7 @@
           <li>
             <a href="{{ url_for('node', owner=dataset.owner.name, node=dataset.name) }}">
               {{ dataset.owner.name }} / {{ dataset.name }}
-            </a>
+            </a> ({{ dataset.resources | length }})
           </li>
         {% endfor %}
       </ul>
