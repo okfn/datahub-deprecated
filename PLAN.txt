@@ -1,4 +1,14 @@
 
+NAV Structures: 
+
+  * Main search: Query mask, res/ds as facet
+  * Most watched, most downloaded
+  * Home page: 5 most popular
+  * 
+
+wranglebase is a simple page for 
+
+
 Near-Term TODO:
   --- * Authoriztaion support
   --- * Metadata support
