@@ -8,7 +8,7 @@ multiple datasets, so the same reference can be used in multiple
 contexts.
 
 Installation
-============
+------------
 
 To install datahub, you need to load its dependencies. For that, you 
 may want to create a virtualenv before you perform these steps::
