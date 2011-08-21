@@ -1,6 +1,6 @@
 
 {% macro mainbar_list_item(resource) %}
-  <li class="resource-item">
+  <li class="resource-item node-item">
     <span class="url"><a href="{{ resource.url }}"><img
         src="/static/img/icons/link.png" alt="Download" /></a></span>
     <span class="name"><a href="{{ url_for('account.get', account=resource.owner.name)

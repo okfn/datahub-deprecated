@@ -4,7 +4,7 @@ from flaskext.mail import Message
 from datahub.core import db, mail, app
 from datahub.exc import NotFound
 from datahub.auth import require
-from datahub.model import Account
+from datahub.model import Account, Resource, Dataset
 from datahub.model.event import AccountUpdatedEvent
 
 from datahub.logic import event
@@ -58,6 +58,12 @@ def update(account_name, data):
 
     db.session.commit()
     return account
+
+def resources(account):
+    return db.session.query(Resource).filter_by(owner=account)
+
+def datasets(account):
+    return db.session.query(Dataset).filter_by(owner=account)
 
 def rebuild():
     """ Rebuild the search index for all accounts. """

@@ -6,8 +6,9 @@
     </span>
     <span class="title">
       <a href="{{ url_for('account.get', account=event.account.name) }}">{{
-        event.account.name }}</a> 
+        event.account.name }}</a>
       {{ event | event_title }}
+      ({{event.time.strftime("%d.%m.%Y, %H:%M")}})
     </span>
     <p>{{ event.message | safe }} &nbsp; </p>
   </li>

@@ -2,6 +2,7 @@
 {% from "account/parts.html" import account_heading %}
 {% from "resource/parts.html" import create_form as resource_create_form %}
 {% from "resource/parts.html" import mainbar_list_item as resource_mainbar_list_item %}
+{% from "dataset/parts.html" import mainbar_list_item as dataset_mainbar_list_item %}
 {% from "event/parts.html" import event_list_item %}
 {% extends "layout.html" %}
 
@@ -37,9 +38,19 @@
   </div>
   <div class="leftbar">
     <div class="box">
-      <h2>Resources &amp; Datasets</h2>
-      <ul class="resource-list">
-        {% for node in account.nodes %}
+      <h2>Datasets</h2>
+      <ul class="dataset-list node-list">
+        {% for node in datasets %}
+          {{ dataset_mainbar_list_item(node) }}
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="leftbar">
+    <div class="box">
+      <h2>Resources</h2>
+      <ul class="resource-list node-list">
+        {% for node in resources %}
           {{ resource_mainbar_list_item(node) }}
         {% endfor %}
       </ul>

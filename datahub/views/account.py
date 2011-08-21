@@ -29,9 +29,12 @@ def feed(account):
 def get(account):
     account = logic.account.find(account)
     events = logic.event.latest_by_entity(account)
-    events = Pager(events, 'account.get', request.args, limit=50,
+    events = Pager(events, 'account.get', request.args, limit=10,
                    account=account.name)
+    resources = logic.account.resources(account)
+    datasets = logic.account.datasets(account)
     return render_template('account/home.html',
+                resources=resources, datasets=datasets,
                 account=account, events=events)
 
 @blueprint.route('/activate/<account>')

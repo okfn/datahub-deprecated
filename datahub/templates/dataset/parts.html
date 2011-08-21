@@ -1,3 +1,14 @@
+{% macro mainbar_list_item(dataset) %}
+  <li class="dataset-item node-item">
+    <span class="name"><a href="{{ url_for('account.get', account=dataset.owner.name)
+        }}">{{ dataset.owner.name }}</a> /
+    <strong><a href="{{ url_for('node', owner=dataset.owner.name, node=dataset.name)
+    }}">{{ dataset.name }}</a></strong> 
+    <span class="resource-count">({{ dataset.resources | length}} resources)</span>
+    </span>
+    <p>{{ dataset.summary }}</p>
+  </li>
+{% endmacro %}
 
 {% macro create_form(user, resource=None) %}
   <form action="{{ url_for('dataset_create') }}" 

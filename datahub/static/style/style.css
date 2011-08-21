@@ -305,6 +305,7 @@ footer .site {
      -moz-box-shadow: 0px 0px 3px #bbb;
   -webkit-box-shadow: 0px 0px 3px #bbb;
           box-shadow: 0px 0px 3px #bbb;
+  margin-bottom: 1em;
 }
 
 .nobox {
@@ -438,21 +439,26 @@ form input[type=submit]:active {
   }
 
 /* Listings */
-.resource-list {
+.node-list {
   list-style: none;
   margin: 0;
   padding-bottom: 1em;
 }
 
-.resource-item {
+.node-item {
   list-style: none;
   padding-top: 1em;
   padding-bottom: 0.5em;
   border-bottom: 1px solid #ddd;
 }
 
-.resource-item .name {
+.node-item .name {
   font-size: 1.1em;
+}
+
+.dataset-item .resource-count {
+  color: #666;
+  font-size: small;
 }
 
 .resource-item .url {
