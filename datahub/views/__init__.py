@@ -8,7 +8,7 @@ from datahub.model import Resource, Dataset
 from datahub.auth import require
 from datahub import logic
 from datahub.pager import Pager
-from datahub.util import request_content
+from datahub.util import request_content, jsonify
 
 from datahub.views.resource_api import api as resource_api
 from datahub.views.dataset_api import api as dataset_api
@@ -22,6 +22,14 @@ app.register_blueprint(account_api, url_prefix='/api/v1/account')
 app.register_blueprint(event_api, url_prefix='/api/v1/event')
 app.register_blueprint(stream_api, url_prefix='/api/v1/stream')
 app.register_blueprint(account)
+
+@app.route('/api/v1')
+def apiroot():
+    return jsonify({'api': 'ok', 
+                    'version': 1, 
+                    'site_id': app.config.get('SITE_ID', 'datahub.local')
+                    })
+
 
 @app.route('/<owner>/<node>')
 def node(owner, node):

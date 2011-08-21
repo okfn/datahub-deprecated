@@ -2,6 +2,7 @@ configlocal.js
 sandbox
 *.pyc
 *.egg.info
+doc/_build
 htmlcov/
 datahub.db
 .coverage
