@@ -5,14 +5,12 @@ from datahub import core
 from datahub import model
 from datahub import web
 
-JSON = 'application/json'
-
 RESOURCE_FIXTURE = {'name': 'my-file', 
                     'url': 'http://mylab.org/data.csv',
                     'summary': 'A very neat resource!'}
 
 from util import make_test_app, tear_down_test_app
-from util import create_fixture_user, AUTHZ
+from util import create_fixture_user, AUTHZ, JSON
 
 class ResourceTestCase(unittest.TestCase):
 

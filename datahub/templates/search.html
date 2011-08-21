@@ -1,0 +1,20 @@
+{% import "macros.html" as macros %}
+{% extends "layout.html" %}
+
+{% block title %}
+  Welcome
+{% endblock %}
+
+{% block content %}
+  <h1>Search</h1>
+  <div class="box">
+    // FIXME: Listing of users.
+    <ul>
+      {% for account in accounts %}
+      <li><a href="{{ url_for('account.get', account=account.name) }}">{{
+        account.name }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endblock %}
+

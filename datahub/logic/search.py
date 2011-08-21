@@ -10,6 +10,9 @@ def connection():
                           http_user=app.config.get('SOLR_USER'),
                           http_pass=app.config.get('SOLR_PASSWORD'))
 
+def site_id():
+    return app.config.get('SITE_ID', 'datahub.local')
+
 def to_key(entity):
     return 'datahub/%s//%s' % (entity.__tablename__, entity.id)
 
@@ -35,6 +38,7 @@ def index_add(entity):
     conn = connection()
     data = entity.to_dict()
     data['_key'] = to_key(entity)
+    data['site_id'] = site_id()
     data['doc_type'] = entity.__tablename__
     flat_data = {}
     for k, v in data.items():
@@ -46,6 +50,8 @@ def index_add(entity):
     for k, v in data.items():
         if isinstance(v, datetime):
             data[k] = datetime_add_tz(v)
+    #from pprint import pprint
+    #pprint(data)
     try:
         conn.add_many([data])
         conn.commit()
@@ -59,7 +65,8 @@ def index_delete(entity):
         raise TypeError('Can only index entities with a __tablename__')
     conn = connection()
     try:
-        conn.delete_query('+_key:"%s"' % to_key(entity))
+        conn.delete_query('+_key:"%s" AND +site_id:"%s"' % (to_key(entity),
+            site_id()))
         conn.commit()
     finally: 
         conn.close()
@@ -68,8 +75,9 @@ def reset_index():
     """ Delete all entries from the index. """
     conn = connection()
     try:
-        conn.delete_query('*:*')
+        conn.delete_query('+site_id:"%s"' % site_id())
         conn.commit()
     finally: 
         conn.close()
+
 

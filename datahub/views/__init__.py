@@ -133,6 +133,11 @@ def dashboard():
                 resources=resources,
                 datasets=datasets)
 
+@app.route('/search')
+def search():
+
+    return render_template('search.html')
+
 @app.route('/')
 def home():
     if not current_user.is_anonymous():

@@ -1,7 +1,7 @@
 from datahub import core
 from datahub import web
 
-
+JSON = 'application/json'
 FIXTURE_USER = {'name': 'fixture', 
                 'full_name': 'Fixture',
                 'email': 'fixture@datahub.net',
@@ -21,6 +21,7 @@ def create_fixture_user(app):
 
 def make_test_app(use_cookies=False):
     web.app.config['TESTING'] = True
+    web.app.config['SITE_ID'] = '$$$TEST$$$'
     web.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
     web.app.config['ELASTIC_SEARCH_INDEX'] = 'datahub_test'
     core.db.create_all()
@@ -30,4 +31,6 @@ def make_test_app(use_cookies=False):
 def tear_down_test_app():
     core.db.session.rollback()
     core.db.drop_all()
+    from datahub.logic import search
+    search.reset_index()
 

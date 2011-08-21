@@ -89,12 +89,13 @@
  </types>
 
 
+
  <fields>
    <field name="_key" type="string" indexed="true" stored="true" required="true" />
    <field name="id" type="string" indexed="true" stored="true" />
+   <field name="site_id" type="string" indexed="true" stored="true" />
    <field name="doc_type" type="string" indexed="true" stored="true" />
    <field name="name" type="text" indexed="true" stored="true" />
-
    <field name="full_name" type="text" indexed="true" stored="true" />
 
    <field name="owner" type="string" indexed="true" stored="true" />
